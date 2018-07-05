@@ -6,6 +6,10 @@
 
 #define MAX_LOADSTRING 100
 
+// ID for menu item
+#define IDM_FILE_OPEN 1
+#define IDM_FILE_QUIT 2
+
 // Global variables:
 HINSTANCE hInst;
 WCHAR szTitle[MAX_LOADSTRING];                  // Title bar placeholder
@@ -16,12 +20,15 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+void				AddMenus(HWND);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+	//MessageBoxW(NULL, L"First Program", L"First", MB_OK);
+
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -55,8 +62,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     return (int) msg.wParam;
 }
 
-
-
 /*
  *Registers a window class.
  */
@@ -72,7 +77,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PDFVIEWER));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
+    wcex.hCursor        = LoadCursor(nullptr, IDC_HAND);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
     wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_PDFVIEWER);
     wcex.lpszClassName  = szWindowClass;
@@ -110,6 +115,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+	case WM_CREATE:
+		{
+			// Main window is maximized at the very beginning.
+			// We want to have as big text area as possible.
+			ShowWindow(hWnd, SW_MAXIMIZE);
+
+			// Add menu with possibility to open a file
+			AddMenus(hWnd);
+		}
+		break;
+
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -119,6 +135,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
+			case IDM_FILE_OPEN:
+				//TODO: implement fetching the path of the opened file
+				MessageBeep(MB_ICONINFORMATION);
+				break;
+			case IDM_FILE_QUIT:
+				SendMessage(hWnd, WM_CLOSE, 0, 0);
+				break;
             case IDM_EXIT:
                 DestroyWindow(hWnd);
                 break;
@@ -164,4 +187,23 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+void AddMenus(HWND hwnd) {
+
+	HMENU hMenubar;
+	HMENU hFileMenu, hInfoMenu;
+
+	hMenubar = CreateMenu();
+	hFileMenu = CreateMenu();
+	hInfoMenu = CreateMenu();
+
+	AppendMenuW(hFileMenu, MF_STRING, IDM_FILE_OPEN, L"&Open");
+	AppendMenuW(hFileMenu, MF_SEPARATOR, 0, NULL);
+	AppendMenuW(hFileMenu, MF_STRING, IDM_FILE_QUIT, L"&Quit");
+	AppendMenuW(hInfoMenu, MF_STRING, IDM_ABOUT, L"&About");
+
+	AppendMenuW(hMenubar, MF_POPUP, (UINT_PTR)hFileMenu, L"&File");
+	AppendMenuW(hMenubar, MF_POPUP, (UINT_PTR)hInfoMenu, L"&Info");
+	SetMenu(hwnd, hMenubar);
 }
