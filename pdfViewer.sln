@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdfViewer", "pdfViewer\pdfViewer.vcxproj", "{0811A541-C40E-4003-A748-1E552718B4F5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gTestGMockStaticLib", "gTestGMockStaticLib\gTestGMockStaticLib.vcxproj", "{E95F93F0-464B-471A-AD71-13AA9F8D5998}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdfViewerTest", "pdfViewerTest\pdfViewerTest.vcxproj", "{A3A98A1B-387E-4D5C-B630-17BCBC73AF7D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0811A541-C40E-4003-A748-1E552718B4F5}.Debug|x64.ActiveCfg = Debug|x64
+		{0811A541-C40E-4003-A748-1E552718B4F5}.Debug|x64.Build.0 = Debug|x64
+		{0811A541-C40E-4003-A748-1E552718B4F5}.Debug|x86.ActiveCfg = Debug|Win32
+		{0811A541-C40E-4003-A748-1E552718B4F5}.Debug|x86.Build.0 = Debug|Win32
+		{0811A541-C40E-4003-A748-1E552718B4F5}.Release|x64.ActiveCfg = Release|x64
+		{0811A541-C40E-4003-A748-1E552718B4F5}.Release|x64.Build.0 = Release|x64
+		{0811A541-C40E-4003-A748-1E552718B4F5}.Release|x86.ActiveCfg = Release|Win32
+		{0811A541-C40E-4003-A748-1E552718B4F5}.Release|x86.Build.0 = Release|Win32
+		{E95F93F0-464B-471A-AD71-13AA9F8D5998}.Debug|x64.ActiveCfg = Debug|x64
+		{E95F93F0-464B-471A-AD71-13AA9F8D5998}.Debug|x64.Build.0 = Debug|x64
+		{E95F93F0-464B-471A-AD71-13AA9F8D5998}.Debug|x86.ActiveCfg = Debug|Win32
+		{E95F93F0-464B-471A-AD71-13AA9F8D5998}.Debug|x86.Build.0 = Debug|Win32
+		{E95F93F0-464B-471A-AD71-13AA9F8D5998}.Release|x64.ActiveCfg = Release|x64
+		{E95F93F0-464B-471A-AD71-13AA9F8D5998}.Release|x64.Build.0 = Release|x64
+		{E95F93F0-464B-471A-AD71-13AA9F8D5998}.Release|x86.ActiveCfg = Release|Win32
+		{E95F93F0-464B-471A-AD71-13AA9F8D5998}.Release|x86.Build.0 = Release|Win32
+		{A3A98A1B-387E-4D5C-B630-17BCBC73AF7D}.Debug|x64.ActiveCfg = Debug|x64
+		{A3A98A1B-387E-4D5C-B630-17BCBC73AF7D}.Debug|x64.Build.0 = Debug|x64
+		{A3A98A1B-387E-4D5C-B630-17BCBC73AF7D}.Debug|x86.ActiveCfg = Debug|Win32
+		{A3A98A1B-387E-4D5C-B630-17BCBC73AF7D}.Debug|x86.Build.0 = Debug|Win32
+		{A3A98A1B-387E-4D5C-B630-17BCBC73AF7D}.Release|x64.ActiveCfg = Release|x64
+		{A3A98A1B-387E-4D5C-B630-17BCBC73AF7D}.Release|x64.Build.0 = Release|x64
+		{A3A98A1B-387E-4D5C-B630-17BCBC73AF7D}.Release|x86.ActiveCfg = Release|Win32
+		{A3A98A1B-387E-4D5C-B630-17BCBC73AF7D}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B184BFBC-6850-41F4-9BD6-D3E54A63EED4}
+	EndGlobalSection
+EndGlobal
