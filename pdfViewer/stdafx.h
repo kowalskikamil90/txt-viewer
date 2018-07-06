@@ -11,6 +11,7 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+#include <Commdlg.h>
 
 // TODO: add other required headers here
  

@@ -14,6 +14,7 @@
 HINSTANCE hInst;
 WCHAR szTitle[MAX_LOADSTRING];                  // Title bar placeholder
 WCHAR szWindowClass[MAX_LOADSTRING];            // Class name for the main window
+TCHAR szFile[MAX_PATH];							// Holds the path to the opened file
 
 // Forward declarations
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -21,18 +22,17 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 void				AddMenus(HWND);
+void				OpenDialog(HWND);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
-	//MessageBoxW(NULL, L"First Program", L"First", MB_OK);
-
+	// This is always NULL in GT 16-bit applications
     UNREFERENCED_PARAMETER(hPrevInstance);
+	// No input arguments for the program
     UNREFERENCED_PARAMETER(lpCmdLine);
-
-    // TODO: Place your code here.
 
     // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -136,8 +136,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
 			case IDM_FILE_OPEN:
-				//TODO: implement fetching the path of the opened file
-				MessageBeep(MB_ICONINFORMATION);
+				OpenDialog(hWnd);
 				break;
 			case IDM_FILE_QUIT:
 				SendMessage(hWnd, WM_CLOSE, 0, 0);
@@ -198,12 +197,38 @@ void AddMenus(HWND hwnd) {
 	hFileMenu = CreateMenu();
 	hInfoMenu = CreateMenu();
 
+	// File menu
 	AppendMenuW(hFileMenu, MF_STRING, IDM_FILE_OPEN, L"&Open");
 	AppendMenuW(hFileMenu, MF_SEPARATOR, 0, NULL);
 	AppendMenuW(hFileMenu, MF_STRING, IDM_FILE_QUIT, L"&Quit");
+
+	// Info menu
 	AppendMenuW(hInfoMenu, MF_STRING, IDM_ABOUT, L"&About");
 
+	// Append menus to menubar
 	AppendMenuW(hMenubar, MF_POPUP, (UINT_PTR)hFileMenu, L"&File");
 	AppendMenuW(hMenubar, MF_POPUP, (UINT_PTR)hInfoMenu, L"&Info");
 	SetMenu(hwnd, hMenubar);
+}
+
+void OpenDialog(HWND hwnd) {
+
+	OPENFILENAME ofn;
+
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.lpstrFile = szFile;
+	ofn.lpstrFile[0] = '\0';
+	ofn.hwndOwner = hwnd;
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = TEXT("All files(*.*)\0*.*\0");
+	ofn.nFilterIndex = 1;
+	ofn.lpstrInitialDir = NULL;
+	ofn.lpstrFileTitle = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+	if (GetOpenFileName(&ofn))
+		// TODO: parse the content of PDF file,
+		//		 for now just set the title bar of main window
+		SetWindowTextW(hwnd, ofn.lpstrFile);
 }
