@@ -1,28 +1,22 @@
 #include "stdafx.h"
 #include "PdfFileOpener.h"
 
-PdfFileOpener* PdfFileOpener::instance = nullptr;
-
 PdfFileOpener::PdfFileOpener()
 {
 }
 
 PdfFileOpener::~PdfFileOpener()
 {
-	// Leads to endless recursion problem
-	// delete PdfFileOpener::instance;
+	
 }
 
 /*
  * Get instance of the PdfFileOpener, Singleton style
  */
-PdfFileOpener* PdfFileOpener::getInstance()
+PdfFileOpener& PdfFileOpener::getInstance()
 {
-	if (PdfFileOpener::instance != nullptr)
-	{
-		return PdfFileOpener::instance;
-	}
-	else return new PdfFileOpener();
+	static PdfFileOpener instance = PdfFileOpener();
+	return instance;
 }
 
 /*

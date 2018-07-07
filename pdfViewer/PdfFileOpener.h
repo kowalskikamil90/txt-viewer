@@ -7,12 +7,11 @@ class PdfFileOpener :
 private:
 	//Private constructor in order to achive singleton pattern
 	PdfFileOpener();
-	static PdfFileOpener *instance;
 	bool hasEnding(PTCHAR fullString, PCTSTR ending);
 
 public:
 
-	static PdfFileOpener* getInstance();
+	static PdfFileOpener& getInstance();
 
 	virtual ~PdfFileOpener();
 	virtual bool openFile(OPENFILENAME *ofn) override;

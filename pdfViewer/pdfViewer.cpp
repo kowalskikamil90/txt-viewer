@@ -133,7 +133,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             int wmId = LOWORD(wParam);
             
 			// This is a singleton
-			PdfFileOpener *fod = PdfFileOpener::getInstance();
+			PdfFileOpener& fod = PdfFileOpener::getInstance();
 
 			switch (wmId)
 			{
@@ -141,7 +141,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 				break;
 			case IDM_FILE_OPEN:
-				if (!OpenDialog(hWnd, fod))
+				if (!OpenDialog(hWnd, &fod))
 				{ // Non *.pdf file was chosen...
 					LPCWSTR noPdf = L"Not PDF";
 					SetWindowTextW(hWnd, noPdf);
