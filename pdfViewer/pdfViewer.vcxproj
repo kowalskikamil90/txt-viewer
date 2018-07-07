@@ -147,6 +147,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FileOpener.h" />
+    <ClInclude Include="misc.h" />
+    <ClInclude Include="PdfFileOpener.h" />
     <ClInclude Include="func1.h" />
     <ClInclude Include="pdfViewer.h" />
     <ClInclude Include="resource.h" />
@@ -154,6 +157,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PdfFileOpener.cpp" />
     <ClCompile Include="func1.cpp" />
     <ClCompile Include="pdfViewer.cpp" />
     <ClCompile Include="stdafx.cpp">

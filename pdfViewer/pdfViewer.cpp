@@ -3,6 +3,8 @@
 // This needs to be the first include
 #include "stdafx.h"
 #include "pdfViewer.h"
+#include "PdfFileOpener.h"
+#include "misc.h"
 
 #define MAX_LOADSTRING 100
 
@@ -14,15 +16,15 @@
 HINSTANCE hInst;
 WCHAR szTitle[MAX_LOADSTRING];                  // Title bar placeholder
 WCHAR szWindowClass[MAX_LOADSTRING];            // Class name for the main window
-TCHAR szFile[MAX_PATH];							// Holds the path to the opened file
+TCHAR szFile[MAX_PATH];                         // Holds the path to the opened file
 
 // Forward declarations
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-void				AddMenus(HWND);
-void				OpenDialog(HWND);
+void                AddMenus(HWND);
+bool                OpenDialog(HWND hwnd, FileOpener *fo);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -129,14 +131,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
-            // Cancel menu selection
-            switch (wmId)
-            {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
+            
+			// This is a singleton
+			PdfFileOpener *fod = PdfFileOpener::getInstance();
+
+			switch (wmId)
+			{
+			case IDM_ABOUT:
+				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+				break;
 			case IDM_FILE_OPEN:
-				OpenDialog(hWnd);
+				if (!OpenDialog(hWnd, fod))
+				{ // Non *.pdf file was chosen...
+					LPCWSTR noPdf = L"Not PDF";
+					SetWindowTextW(hWnd, fod->getFilePath().c_str());
+				}
+				else
+				{
+					LPCWSTR noPdf = L"PDF";
+					SetWindowTextW(hWnd, fod->getFilePath().c_str());
+				}
 				break;
 			case IDM_FILE_QUIT:
 				SendMessage(hWnd, WM_CLOSE, 0, 0);
@@ -188,6 +202,9 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return (INT_PTR)FALSE;
 }
 
+/*
+ * Add menubar and menus in the main window
+ */
 void AddMenus(HWND hwnd) {
 
 	HMENU hMenubar;
@@ -211,7 +228,10 @@ void AddMenus(HWND hwnd) {
 	SetMenu(hwnd, hMenubar);
 }
 
-void OpenDialog(HWND hwnd) {
+/*
+ * Open 'openfile' dialog box and store filepath
+ */
+bool OpenDialog(HWND hwnd, FileOpener *fo) {
 
 	OPENFILENAME ofn;
 
@@ -227,8 +247,10 @@ void OpenDialog(HWND hwnd) {
 	ofn.lpstrFileTitle = NULL;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-	if (GetOpenFileName(&ofn))
-		// TODO: parse the content of PDF file,
-		//		 for now just set the title bar of main window
-		SetWindowTextW(hwnd, ofn.lpstrFile);
+	if (fo->openFile(&ofn))
+	{
+		if (fo->validateFilePath() == OpResult::SUCCESS) return true;
+		else return false;
+	}
+	else return false;
 }
