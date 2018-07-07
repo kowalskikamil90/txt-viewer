@@ -33,21 +33,10 @@ bool PdfFileOpener::openFile(OPENFILENAME *ofn)
 	BOOL ret = GetOpenFileName(ofn);
 	if (ret)
 	{
-		/* Get file path and store it as a string.
-		 * The first element (i.e. [0]) is 0 so skip it.*/
-		for (unsigned int i = 1; i < ofn->nMaxFile; i++)
-		{
-			TCHAR tc = ofn->lpstrFile[i];
-			const wchar_t c = static_cast<const wchar_t> (tc);
-			if (c != NULL)
-			{
-				filePath.append(&c);
-			}
-			else
-			{
-				break;
-			}
-		}
+		/* Get file path and store it as a PTCHAR.
+		 * The first element (i.e. [0]) is 0 so skip it.
+		 * lpstrFile is only valid if opening succedeed.*/
+		_tcscpy_s(filePath, ofn->lpstrFile);
 	}
 
 	return ret;
@@ -58,15 +47,21 @@ bool PdfFileOpener::openFile(OPENFILENAME *ofn)
  */
 OpResult PdfFileOpener::validateFilePath()
 {
-	std::wstring pdfEnding(L".pdf");
-	if (hasEnding(filePath, pdfEnding)) return OpResult::SUCCESS;
-	else return OpResult::FAILURE;
+	PCTSTR pdfEnding = L".pdf";
+	if (hasEnding(filePath, pdfEnding))
+	{
+		return OpResult::SUCCESS;
+	}
+	else
+	{
+		return OpResult::FAILURE;
+	}
 }
 
 /*
  * Getter for filePath
  */
-std::wstring PdfFileOpener::getFilePath()
+PTCHAR PdfFileOpener::getFilePath()
 {
 	return filePath;
 }
@@ -75,11 +70,22 @@ std::wstring PdfFileOpener::getFilePath()
  * Check if string ends with some other sting
  */
 bool PdfFileOpener::hasEnding
-  (std::wstring const &fullString, std::wstring const &ending) {
-	if (fullString.length() >= ending.length())
+  (PTCHAR fullString, PCTSTR ending) {
+
+	// fullstring starts with NULL character
+	auto fsLen = _tcslen(fullString+1);
+	auto endLen = _tcslen(ending);
+	auto diff = fsLen - endLen;
+	if (fsLen >= endLen)
 	{
-		return (0 == fullString.compare(fullString.length()
-			    - ending.length(), ending.length(), ending));
+		if (0 == _tcsncmp(fullString + 1 + diff, ending, fsLen - endLen))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	else
 	{

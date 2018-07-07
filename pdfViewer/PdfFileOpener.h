@@ -8,7 +8,7 @@ private:
 	//Private constructor in order to achive singleton pattern
 	PdfFileOpener();
 	static PdfFileOpener *instance;
-	bool hasEnding(std::wstring const &fullString, std::wstring const &ending);
+	bool hasEnding(PTCHAR fullString, PCTSTR ending);
 
 public:
 
@@ -17,6 +17,6 @@ public:
 	virtual ~PdfFileOpener();
 	virtual bool openFile(OPENFILENAME *ofn) override;
 	virtual OpResult validateFilePath() override;
-	virtual std::wstring getFilePath() override;
+	virtual PTCHAR getFilePath() override;
 };
 

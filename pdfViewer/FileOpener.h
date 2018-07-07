@@ -4,18 +4,15 @@
 
 #include "misc.h"
 
-#include <string>
-
 class FileOpener
 {
 protected:
-	std::wstring filePath;
+	TCHAR filePath[MAX_PATH];
 
 public:
 	FileOpener() {};
 	virtual ~FileOpener() {};
 	virtual bool openFile(OPENFILENAME *ofn) = 0;
 	virtual OpResult validateFilePath() = 0;
-	virtual std::wstring getFilePath() = 0;
+	virtual PTCHAR getFilePath() = 0;
 };
-

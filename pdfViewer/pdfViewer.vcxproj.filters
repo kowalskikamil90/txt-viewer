@@ -27,9 +27,6 @@
     <ClInclude Include="pdfViewer.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="func1.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
     <ClInclude Include="FileOpener.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
@@ -45,9 +42,6 @@
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="pdfViewer.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="func1.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="PdfFileOpener.cpp">

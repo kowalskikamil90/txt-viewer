@@ -144,12 +144,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (!OpenDialog(hWnd, fod))
 				{ // Non *.pdf file was chosen...
 					LPCWSTR noPdf = L"Not PDF";
-					SetWindowTextW(hWnd, fod->getFilePath().c_str());
+					SetWindowTextW(hWnd, noPdf);
 				}
 				else
 				{
-					LPCWSTR noPdf = L"PDF";
-					SetWindowTextW(hWnd, fod->getFilePath().c_str());
+					LPCWSTR pdf = L"PDF";
+					SetWindowTextW(hWnd, pdf);
 				}
 				break;
 			case IDM_FILE_QUIT:
@@ -249,8 +249,14 @@ bool OpenDialog(HWND hwnd, FileOpener *fo) {
 
 	if (fo->openFile(&ofn))
 	{
-		if (fo->validateFilePath() == OpResult::SUCCESS) return true;
-		else return false;
+		if (fo->validateFilePath() == OpResult::SUCCESS)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	else return false;
 }
