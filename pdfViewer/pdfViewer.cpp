@@ -5,6 +5,7 @@
 #include "pdfViewer.h"
 #include "PdfFileOpener.h"
 #include "misc.h"
+#include "WindowPlacer.h"
 
 #define MAX_LOADSTRING 100
 
@@ -181,7 +182,21 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
+	{
+		/* Place the window in the center */
+		RECT rect;
+		GetWindowRect(hDlg, &rect);
+		//Size in pixels
+		size2D wndSize(rect.right - rect.left,
+			           rect.bottom - rect.top);
+		coordinates2D coords = WindowPlacer::calculateCenteredWindowCoords(wndSize);
+		SetWindowPos(hDlg,
+			         HWND_TOP,
+			         coords.x, coords.y,
+			         wndSize.x, wndSize.y,
+			         SWP_SHOWWINDOW);
+		return (INT_PTR)TRUE;
+	}
 
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
