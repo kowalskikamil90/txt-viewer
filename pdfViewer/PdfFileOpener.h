@@ -7,7 +7,7 @@ class PdfFileOpener :
 private:
 	//Private constructor in order to achive singleton pattern
 	PdfFileOpener();
-	bool hasEnding(PTCHAR fullString, PCTSTR ending);
+	bool hasEnding(PWCHAR fullString, PCWSTR ending);
 
 public:
 

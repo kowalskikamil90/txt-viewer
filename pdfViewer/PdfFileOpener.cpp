@@ -29,7 +29,7 @@ bool PdfFileOpener::openFile(OPENFILENAME *ofn)
 		/* Get file path and store it as a PTCHAR.
 		 * The first element (i.e. [0]) is 0 so skip it.
 		 * lpstrFile is only valid if opening succedeed.*/
-		_tcscpy_s(filePath, ofn->lpstrFile);
+		wcscpy_s(filePath, ofn->lpstrFile);
 	}
 
 	return ret;
@@ -40,7 +40,7 @@ bool PdfFileOpener::openFile(OPENFILENAME *ofn)
  */
 OpResult PdfFileOpener::validateFilePath()
 {
-	PCTSTR pdfEnding = L".pdf";
+	PCWSTR pdfEnding = L".pdf";
 	if (hasEnding(filePath, pdfEnding))
 	{
 		return OpResult::SUCCESS;
@@ -55,15 +55,15 @@ OpResult PdfFileOpener::validateFilePath()
  * Check if string ends with some other sting
  */
 bool PdfFileOpener::hasEnding
-  (PTCHAR fullString, PCTSTR ending) {
+  (PWCHAR fullString, PCWSTR ending) {
 
 	// fullstring starts with NULL character
-	auto fsLen = _tcslen(fullString+1);
-	auto endLen = _tcslen(ending);
+	auto fsLen = wcslen(fullString+1);
+	auto endLen = wcslen(ending);
 	auto diff = fsLen - endLen;
 	if (fsLen >= endLen)
 	{
-		if (0 == _tcsncmp(fullString + 1 + diff, ending, fsLen - endLen))
+		if (0 == wcsncmp(fullString + 1 + diff, ending, fsLen - endLen))
 		{
 			return true;
 		}

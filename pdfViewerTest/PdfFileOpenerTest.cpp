@@ -8,7 +8,7 @@ TEST(PdfFileOpenerTests, singletonTest)
 	PdfFileOpener& pfo1 = PdfFileOpener::getInstance();
 	PdfFileOpener& pfo2 = PdfFileOpener::getInstance();
 
-	ASSERT_EQ(&pfo1, &pfo2);
+	EXPECT_EQ(&pfo1, &pfo2);
 }
 
 TEST(PdfFileOpenerTests, validatePathSuccessTest)
@@ -16,16 +16,16 @@ TEST(PdfFileOpenerTests, validatePathSuccessTest)
 	PdfFileOpener& pdfOpener = PdfFileOpener::getInstance();
 
 	pdfOpener.setFilePath(L"D://someDir/someFile.pdf");
-	ASSERT_EQ(pdfOpener.validateFilePath(), OpResult::SUCCESS);
+	EXPECT_EQ(pdfOpener.validateFilePath(), OpResult::SUCCESS);
 
 	pdfOpener.setFilePath(L"C://someDir/someOtherDir/pdfPdfpdf.pdf");
-	ASSERT_EQ(pdfOpener.validateFilePath(), OpResult::SUCCESS);
+	EXPECT_EQ(pdfOpener.validateFilePath(), OpResult::SUCCESS);
 
 	pdfOpener.setFilePath(L"/pdfPdfpdf.pdf");
-	ASSERT_EQ(pdfOpener.validateFilePath(), OpResult::SUCCESS);
+	EXPECT_EQ(pdfOpener.validateFilePath(), OpResult::SUCCESS);
 
 	pdfOpener.setFilePath(L"asd.pdf");
-	ASSERT_EQ(pdfOpener.validateFilePath(), OpResult::SUCCESS);
+	EXPECT_EQ(pdfOpener.validateFilePath(), OpResult::SUCCESS);
 }
 
 TEST(PdfFileOpenerTests, validatePathFailureTest)
@@ -33,14 +33,14 @@ TEST(PdfFileOpenerTests, validatePathFailureTest)
 	PdfFileOpener& pdfOpener = PdfFileOpener::getInstance();
 
 	pdfOpener.setFilePath(L".pdf");
-	ASSERT_EQ(pdfOpener.validateFilePath(), OpResult::FAILURE);
+	EXPECT_EQ(pdfOpener.validateFilePath(), OpResult::FAILURE);
 
 	pdfOpener.setFilePath(L"C://someDir/someOtherDir/pdfPdfpdf");
-	ASSERT_EQ(pdfOpener.validateFilePath(), OpResult::FAILURE);
+	EXPECT_EQ(pdfOpener.validateFilePath(), OpResult::FAILURE);
 
 	pdfOpener.setFilePath(L"/pdfPdfpdf.pdff");
-	ASSERT_EQ(pdfOpener.validateFilePath(), OpResult::FAILURE);
+	EXPECT_EQ(pdfOpener.validateFilePath(), OpResult::FAILURE);
 
 	pdfOpener.setFilePath(L"asd.pdfpdf");
-	ASSERT_EQ(pdfOpener.validateFilePath(), OpResult::FAILURE);
+	EXPECT_EQ(pdfOpener.validateFilePath(), OpResult::FAILURE);
 }

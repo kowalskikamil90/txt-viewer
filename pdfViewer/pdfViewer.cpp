@@ -16,11 +16,11 @@
 HINSTANCE hInst;
 WCHAR szTitle[MAX_LOADSTRING];                  // Title bar placeholder
 WCHAR szWindowClass[MAX_LOADSTRING];            // Class name for the main window
-TCHAR szFile[MAX_PATH];                         // Holds the path to the opened file
+WCHAR szFile[MAX_PATH];                         // Holds the path to the opened file
 
-int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
+                     _In_ PWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
 	// This is always NULL in GT 16-bit applications

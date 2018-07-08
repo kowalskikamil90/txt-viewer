@@ -3,12 +3,12 @@
 #include "misc.h"
 
 #include <Windows.h>
-#include <tchar.h>
+#include <wchar.h>
 
 class FileOpener
 {
 protected:
-	TCHAR filePath[MAX_PATH];
+	WCHAR filePath[MAX_PATH];
 
 public:
 	FileOpener() {};
@@ -19,7 +19,7 @@ public:
 	/*
 	* Getter for filePath
 	*/
-	PTCHAR getFilePath()
+	PWCHAR getFilePath()
 	{
 		return filePath;
 	}
@@ -27,9 +27,9 @@ public:
 	/*
 	* Setter for filePath
 	*/
-	void setFilePath(PCTSTR path)
+	void setFilePath(PCWSTR path)
 	{
-		auto pathLen = _tcslen(path);
-		_tcsncpy_s(filePath, path, pathLen);
+		auto pathLen = wcslen(path);
+		wcsncpy_s(filePath, path, pathLen);
 	}
 };

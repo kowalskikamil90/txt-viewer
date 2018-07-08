@@ -2,14 +2,14 @@
 #include "../pdfViewer/FileOpener.h"
 #include "../pdfViewer/PdfFileOpener.h"
 
-#include <tchar.h>
+#include <wchar.h>
 
 TEST(FileOpenerTests, pathSetterGetterTest)
 {
 	PdfFileOpener& pdfOpener = PdfFileOpener::getInstance();
-	PCTSTR pathToSet = L"D://someDirectory/someFile.asd";
+	PCWSTR pathToSet = L"D://someDirectory/someFile.asd";
 	pdfOpener.setFilePath(pathToSet);
-	PTCHAR gotPath = pdfOpener.getFilePath();
+	PWCHAR gotPath = pdfOpener.getFilePath();
 
-	ASSERT_EQ(_tcscmp(pathToSet, gotPath), 0);
+	EXPECT_EQ(wcscmp(pathToSet, gotPath), 0);
 }

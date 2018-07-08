@@ -13,6 +13,8 @@ TEST(PdfViewerTests, openDialogTestSuccess)
 {
 	MockFileOpener mockFileOpener;
 	HWND hwnd;
+
+	//No really relevant but needed to silence the compiler
 	ZeroMemory(&hwnd, sizeof(HWND));
 
 	// Setup expectations and return values
