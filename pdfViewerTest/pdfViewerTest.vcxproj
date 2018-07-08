@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Kamilek\gtest\googletest-master\googletest\include;C:\Users\Kamilek\gtest\googletest-master\googletest;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Kamilek\gtest\googletest-master\googlemock\include;C:\Users\Kamilek\gtest\googletest-master\googletest\include;C:\Users\Kamilek\gtest\googletest-master\googletest;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -150,6 +150,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="fileOpenerTest.cpp" />
+    <ClCompile Include="MockFileOpener.h" />
+    <ClCompile Include="PdfFileOpenerTest.cpp" />
     <ClCompile Include="pdfViewerTest.cpp" />
   </ItemGroup>
   <ItemGroup>

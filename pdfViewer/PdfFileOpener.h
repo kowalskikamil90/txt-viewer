@@ -16,6 +16,5 @@ public:
 	virtual ~PdfFileOpener();
 	virtual bool openFile(OPENFILENAME *ofn) override;
 	virtual OpResult validateFilePath() override;
-	virtual PTCHAR getFilePath() override;
 };
 

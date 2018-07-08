@@ -7,7 +7,6 @@ PdfFileOpener::PdfFileOpener()
 
 PdfFileOpener::~PdfFileOpener()
 {
-	
 }
 
 /*
@@ -15,7 +14,7 @@ PdfFileOpener::~PdfFileOpener()
  */
 PdfFileOpener& PdfFileOpener::getInstance()
 {
-	static PdfFileOpener instance = PdfFileOpener();
+	static PdfFileOpener instance;
 	return instance;
 }
 
@@ -50,14 +49,6 @@ OpResult PdfFileOpener::validateFilePath()
 	{
 		return OpResult::FAILURE;
 	}
-}
-
-/*
- * Getter for filePath
- */
-PTCHAR PdfFileOpener::getFilePath()
-{
-	return filePath;
 }
 
 /*
