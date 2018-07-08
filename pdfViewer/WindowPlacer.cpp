@@ -1,7 +1,5 @@
 #include "stdafx.h"
 
-#include <Windows.h>
-
 #include "WindowPlacer.h"
 
 
@@ -38,4 +36,20 @@ coordinates2D WindowPlacer::calculateCenteredWindowCoords(size2D wndSize)
 	// Upper, left corner of the window
 	coordinates2D wndUpperLeftCorner(center.x - wndSize.x/2, center.y -wndSize.y/2);
 	return wndUpperLeftCorner;
+}
+
+void WindowPlacer::centerTheWindow(HWND hwnd)
+{
+	/* Place the window in the center */
+	RECT rect;
+	GetWindowRect(hwnd, &rect);
+	//Size in pixels
+	size2D wndSize(rect.right - rect.left,
+		           rect.bottom - rect.top);
+	coordinates2D coords = calculateCenteredWindowCoords(wndSize);
+	SetWindowPos(hwnd,
+		         HWND_TOP,
+		         coords.x, coords.y,
+		         wndSize.x, wndSize.y,
+		         SWP_SHOWWINDOW);
 }

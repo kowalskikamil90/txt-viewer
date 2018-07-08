@@ -1,7 +1,6 @@
-// pdfViewer.cpp : This is the application entry point
-
 // This needs to be the first include
 #include "stdafx.h"
+
 #include "pdfViewer.h"
 #include "PdfFileOpener.h"
 #include "misc.h"
@@ -13,12 +12,15 @@
 #define IDM_FILE_OPEN 1
 #define IDM_FILE_QUIT 2
 
-// Global variables:
+// Global variables
 HINSTANCE hInst;
 WCHAR szTitle[MAX_LOADSTRING];                  // Title bar placeholder
 WCHAR szWindowClass[MAX_LOADSTRING];            // Class name for the main window
 WCHAR szFile[MAX_PATH];                         // Holds the path to the opened file
 
+/*
+ * This is the application entry point
+ */
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ PWSTR    lpCmdLine,
@@ -58,7 +60,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 }
 
 /*
- *Registers a window class.
+ * Registers a window class.
  */
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
@@ -82,7 +84,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 }
 
 /*
- *Display main widnow.
+ * Displays main widnow.
  */
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
@@ -104,7 +106,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 /*
- *Process messages for main window
+ * Processes messages for main window
  */
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -125,7 +127,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             int wmId = LOWORD(wParam);
             
-			// This is a singleton
+			/* This is a singleton; NOTE: reference is needed.
+			 * Otherwise, copy constructor gest called.*/
 			PdfFileOpener& fod = PdfFileOpener::getInstance();
 
 			switch (wmId)
@@ -174,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 /*
- *Handle messages for info window
+ * Handles messages for info window
  */
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -183,18 +186,8 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_INITDIALOG:
 	{
-		/* Place the window in the center */
-		RECT rect;
-		GetWindowRect(hDlg, &rect);
-		//Size in pixels
-		size2D wndSize(rect.right - rect.left,
-			           rect.bottom - rect.top);
-		coordinates2D coords = WindowPlacer::calculateCenteredWindowCoords(wndSize);
-		SetWindowPos(hDlg,
-			         HWND_TOP,
-			         coords.x, coords.y,
-			         wndSize.x, wndSize.y,
-			         SWP_SHOWWINDOW);
+		// Place the window in the center
+		WindowPlacer::centerTheWindow(hDlg);
 		return (INT_PTR)TRUE;
 	}
 
@@ -210,7 +203,7 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 /*
- * Add menubar and menus in the main window
+ * Adds menubar and menus in the main window
  */
 void AddMenus(HWND hwnd) {
 
@@ -236,7 +229,7 @@ void AddMenus(HWND hwnd) {
 }
 
 /*
- * Open 'openfile' dialog box and store filepath
+ * Opens 'openfile' dialog box and store filepath
  */
 bool OpenDialog(HWND hwnd, FileOpener *fo) {
 
