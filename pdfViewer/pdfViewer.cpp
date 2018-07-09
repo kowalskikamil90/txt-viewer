@@ -8,6 +8,13 @@
 
 #define MAX_LOADSTRING 100
 
+// IDs and codes for hot keys
+#define ID_HOTKEY_q 1
+#define HOTKEY_q_CODE 0x71
+#define ID_HOTKEY_Q 2
+#define HOTKEY_Q_CODE 0x51
+
+
 // ID for menu item
 #define IDM_FILE_OPEN 1
 #define IDM_FILE_QUIT 2
@@ -17,6 +24,9 @@ HINSTANCE hInst;
 WCHAR szTitle[MAX_LOADSTRING];                  // Title bar placeholder
 WCHAR szWindowClass[MAX_LOADSTRING];            // Class name for the main window
 WCHAR szFile[MAX_PATH];                         // Holds the path to the opened file
+
+// Local functions declarations
+static void destroyTheWindowAndCleanUp(HWND hWnd);
 
 /*
  * This is the application entry point
@@ -76,7 +86,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PDFVIEWER));
     wcex.hCursor        = LoadCursor(nullptr, IDC_HAND);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_PDFVIEWER);
+	wcex.lpszMenuName   = 0;
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -114,62 +124,79 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
 	case WM_CREATE:
 		{
-			// Main window is maximized at the very beginning.
-			// We want to have as big text area as possible.
+			/* Main window is maximized at the very beginning.
+			 * We want to have as big text area as possible. */
 			ShowWindow(hWnd, SW_MAXIMIZE);
 
 			// Add menu with possibility to open a file
 			AddMenus(hWnd);
-		}
-		break;
 
+			/* Register hot keys */
+			// Register CTRL+q for exit the application
+			RegisterHotKey(hWnd, ID_HOTKEY_Q, MOD_CONTROL | MOD_ALT, HOTKEY_Q_CODE);
+			RegisterHotKey(hWnd, ID_HOTKEY_q, MOD_CONTROL | MOD_ALT, HOTKEY_q_CODE);
+			break;
+		}
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
             
 			/* This is a singleton; NOTE: reference is needed.
-			 * Otherwise, copy constructor gest called.*/
+			 * Otherwise, copy constructor gets called.*/
 			PdfFileOpener& fod = PdfFileOpener::getInstance();
 
 			switch (wmId)
 			{
 			case IDM_ABOUT:
+			{
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 				break;
+			}
 			case IDM_FILE_OPEN:
+			{
 				if (!OpenDialog(hWnd, &fod))
-				{ // Non *.pdf file was chosen...
-					LPCWSTR noPdf = L"Not PDF";
-					SetWindowTextW(hWnd, noPdf);
-				}
-				else
-				{
-					LPCWSTR pdf = L"PDF";
-					SetWindowTextW(hWnd, pdf);
+				{ 
+					// Non *.pdf file was chosen. Popup a message box.
+					MessageBoxW(NULL, L"Choose *.pdf file.", L"INFO", MB_OK | MB_ICONEXCLAMATION);
 				}
 				break;
+			}
 			case IDM_FILE_QUIT:
+			{
 				SendMessage(hWnd, WM_CLOSE, 0, 0);
 				break;
+			}
             case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
+			{
+				DestroyWindow(hWnd);
+				break;
+			}
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
+		break;
         }
-        break;
     case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: Add here painting code that uses hdc element...
-            EndPaint(hWnd, &ps);
-        }
-        break;
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hWnd, &ps);
+        // TODO: Add here painting code that uses hdc element...
+        EndPaint(hWnd, &ps);
+     	break;
+    }
+	case WM_HOTKEY:
+	{ //TODO: fix this case - the message is not received
+		if (wParam == ID_HOTKEY_Q || wParam == ID_HOTKEY_q)
+		{
+			destroyTheWindowAndCleanUp(hWnd);
+		}
+		break;
+	}
     case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
+	{
+		destroyTheWindowAndCleanUp(hWnd);
+		break;
+	}
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -259,4 +286,10 @@ bool OpenDialog(HWND hwnd, FileOpener *fo) {
 		}
 	}
 	else return false;
+}
+
+static void destroyTheWindowAndCleanUp(HWND hWnd)
+{
+	UnregisterHotKey(hWnd, ID_HOTKEY_Q);
+	PostQuitMessage(0);
 }

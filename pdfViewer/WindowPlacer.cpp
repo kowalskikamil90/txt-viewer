@@ -41,7 +41,7 @@ coordinates2D WindowPlacer::calculateCenteredWindowCoords(size2D wndSize)
 void WindowPlacer::centerTheWindow(HWND hwnd)
 {
 	/* Place the window in the center */
-	RECT rect;
+	RECT rect = { 0 };
 	GetWindowRect(hwnd, &rect);
 	//Size in pixels
 	size2D wndSize(rect.right - rect.left,
