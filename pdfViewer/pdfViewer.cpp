@@ -8,13 +8,6 @@
 
 #define MAX_LOADSTRING 100
 
-// IDs and codes for hot keys
-#define ID_HOTKEY_q 1
-#define HOTKEY_q_CODE 0x71
-#define ID_HOTKEY_Q 2
-#define HOTKEY_Q_CODE 0x51
-
-
 // ID for menu item
 #define IDM_FILE_OPEN 1
 #define IDM_FILE_QUIT 2
@@ -131,10 +124,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Add menu with possibility to open a file
 			AddMenus(hWnd);
 
-			/* Register hot keys */
-			// Register CTRL+q for exit the application
-			RegisterHotKey(hWnd, ID_HOTKEY_Q, MOD_CONTROL | MOD_ALT, HOTKEY_Q_CODE);
-			RegisterHotKey(hWnd, ID_HOTKEY_q, MOD_CONTROL | MOD_ALT, HOTKEY_q_CODE);
 			break;
 		}
     case WM_COMMAND:
@@ -163,14 +152,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			case IDM_FILE_QUIT:
 			{
-				SendMessage(hWnd, WM_CLOSE, 0, 0);
+				int ret = MessageBoxW(hWnd, L"Are you sure you want to quit?",
+					L"Message", MB_OKCANCEL);
+
+				if (ret == IDOK) {
+
+					SendMessage(hWnd, WM_CLOSE, 0, 0);
+				}
+
 				break;
 			}
-            case IDM_EXIT:
-			{
-				DestroyWindow(hWnd);
-				break;
-			}
+
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
@@ -184,11 +176,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         EndPaint(hWnd, &ps);
      	break;
     }
-	case WM_HOTKEY:
-	{ //TODO: fix this case - the message is not received
-		if (wParam == ID_HOTKEY_Q || wParam == ID_HOTKEY_q)
-		{
-			destroyTheWindowAndCleanUp(hWnd);
+	case WM_KEYDOWN:
+	{
+		if (wParam == VK_ESCAPE) {
+
+			int ret = MessageBoxW(hWnd, L"Are you sure you want to quit?",
+				L"Message", MB_OKCANCEL);
+
+			if (ret == IDOK) {
+
+				SendMessage(hWnd, WM_CLOSE, 0, 0);
+			}
 		}
 		break;
 	}
@@ -290,6 +288,5 @@ bool OpenDialog(HWND hwnd, FileOpener *fo) {
 
 static void destroyTheWindowAndCleanUp(HWND hWnd)
 {
-	UnregisterHotKey(hWnd, ID_HOTKEY_Q);
 	PostQuitMessage(0);
 }
