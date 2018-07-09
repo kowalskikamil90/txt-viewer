@@ -19,15 +19,15 @@ OpResult PdfFileOpener::openFile(OPENFILENAME *ofn)
 {
 	if (GetOpenFileName(ofn))
 	{
-		if (wcslen(ofn->lpstrFile) > 0)
-		{
+		//if (wcslen(ofn->lpstrFile) > 0)
+		//{
 			/* Get file path and store it as a PTCHAR.
 			* The first element (i.e. [0]) is 0 so skip it.
 			* lpstrFile is only valid if opening succedeed.
 			* This is the case when user picked a file and clicked OK.*/
 			wcscpy_s(filePath, ofn->lpstrFile);
 			return OpResult::SUCCESS;
-		}
+		//}
 	}
 	else
 	{
@@ -38,7 +38,7 @@ OpResult PdfFileOpener::openFile(OPENFILENAME *ofn)
 			 * or closed the dialog window.*/
 			return OpResult::QUIT;
 		}
-		else if (ret > 0)
+		else
 		{
 			// GetOpenFileName() failed
 			return OpResult::FAILURE;

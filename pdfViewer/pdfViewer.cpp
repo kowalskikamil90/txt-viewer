@@ -6,17 +6,30 @@
 #include "misc.h"
 #include "WindowPlacer.h"
 
+#include <Windows.h>
+#include <commctrl.h>
+#include <strsafe.h>
+
 #define MAX_LOADSTRING 100
+#define MAX_PAGE_DIGITS 4
 
 // ID for menu item
 #define IDM_FILE_OPEN 1
 #define IDM_FILE_QUIT 2
+#define ID_UPDOWN_PAGE 3
+#define ID_EDIT_PAGE 4
+#define ID_DEC_PAGE 5
+#define ID_INC_PAGE 6
 
 // Global variables
 HINSTANCE hInst;
 WCHAR szTitle[MAX_LOADSTRING];                  // Title bar placeholder
 WCHAR szWindowClass[MAX_LOADSTRING];            // Class name for the main window
 WCHAR szFile[MAX_PATH];                         // Holds the path to the opened file
+WORD maxPos = 1, minPos = 0;
+
+// Global handles
+HWND hUpDown, hEdit;
 
 // Local functions declarations
 static void destroyTheWindowAndCleanUp(HWND hWnd);
@@ -115,6 +128,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+
 	case WM_CREATE:
 		{
 			/* Main window is maximized at the very beginning.
@@ -124,38 +138,110 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Add menu with possibility to open a file
 			AddMenus(hWnd);
 
+			/* ADD ALL REQUIRED CONTROLS */
+
+			// Add edit for page selection
+			INITCOMMONCONTROLSEX icex;
+
+			icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+			icex.dwICC = ICC_UPDOWN_CLASS;
+			InitCommonControlsEx(&icex);
+
+			hUpDown = CreateWindowW(UPDOWN_CLASSW, NULL, WS_CHILD | WS_VISIBLE
+				| UDS_SETBUDDYINT | UDS_ALIGNRIGHT,
+				0, 0, 0, 0, hWnd, (HMENU)ID_UPDOWN_PAGE, NULL, NULL);
+
+			hEdit = CreateWindowExW(WS_EX_CLIENTEDGE, WC_EDITW, NULL, WS_CHILD
+				| WS_VISIBLE | ES_RIGHT, 15, 15, 70, 25, hWnd,
+				(HMENU)ID_EDIT_PAGE, NULL, NULL);
+
+			SendMessageW(hUpDown, UDM_SETBUDDY, (WPARAM)hEdit, 0);
+			SendMessageW(hUpDown, UDM_SETRANGE, 0, MAKELPARAM(maxPos, minPos));
+			SendMessageW(hUpDown, UDM_SETPOS32, 0, 0);
+
+			CreateWindowW(L"Static", L"/ 1",
+				WS_CHILD | WS_VISIBLE | SS_LEFT,
+				120, 20, 25, 25,
+				hWnd, NULL, NULL, NULL);
+
+			// Add buttons for page navigation
+			CreateWindowW(L"Button", L"<",
+				WS_VISIBLE | WS_CHILD,
+				20, 150, 80, 25, hWnd, (HMENU)ID_DEC_PAGE, NULL, NULL);
+			CreateWindowW(L"Button", L">",
+				WS_VISIBLE | WS_CHILD,
+				120, 150, 80, 25, hWnd, (HMENU)ID_INC_PAGE, NULL, NULL);
+
+			// Add the actual text field
+			HWND hTextArea = CreateWindowW(L"Static", L"Szla dzieweczka \n,do laseczka \n,do zielonego\n,do zielonego!",
+				WS_CHILD | WS_VISIBLE | SS_LEFT,
+				20, 200, 1200, 450,
+				hWnd, (HMENU)1, NULL, NULL);
+
+			// Create a font for text area
+			HFONT hFont = CreateFont(36, //height of character
+				                     16, //width of character
+				                     0,
+				                     0,
+				                     FW_DONTCARE,
+				                     FALSE,
+				                     TRUE,
+				                     FALSE,
+				                     DEFAULT_CHARSET,
+				                     OUT_OUTLINE_PRECIS,
+				                     CLIP_DEFAULT_PRECIS,
+				                     CLEARTYPE_QUALITY,
+				                     VARIABLE_PITCH,
+				                     TEXT("Times New Roman"));
+
+			// Send message to the text area to change the font
+			SendMessage(hTextArea, WM_SETFONT, (WPARAM)hFont, true);
+
 			break;
 		}
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
-            
-			/* This is a singleton; NOTE: reference is needed.
-			 * Otherwise, copy constructor gets called.*/
-			PdfFileOpener& fod = PdfFileOpener::getInstance();
 
 			switch (wmId)
 			{
+
+			/* Handle page-buttons messages */
+			case ID_DEC_PAGE:
+			{
+				// Implement when pdf parsing ready
+				break;
+			}
+			case ID_INC_PAGE:
+			{
+				// Implement when pdf parsing ready
+				break;
+			}
+
+			/* Handle menu-about item */
 			case IDM_ABOUT:
 			{
 				DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 				break;
 			}
+
+			/* Handle menu-open item */
 			case IDM_FILE_OPEN:
 			{
+				/* This is a singleton; NOTE: reference is needed.
+				 * Otherwise, copy constructor gets called.*/
+				PdfFileOpener& fod = PdfFileOpener::getInstance();
+
 				OpResult opRes = OpenDialog(hWnd, &fod);
 				if (opRes == OpResult::FAILURE)
 				{ 
 					// Non *.pdf file was chosen. Popup a message box.
 					MessageBoxW(NULL, L"Choose *.pdf file.", L"INFO", MB_OK | MB_ICONEXCLAMATION);
 				}
-				/*else if (opRes == OpResult::QUIT)
-				{
-					 User opened the dialog but clicked Cancel
-					 Do not pop up message box. 
-				}*/
 				break;
 			}
+
+			/* Handle menu-quit item */
 			case IDM_FILE_QUIT:
 			{
 				int ret = MessageBoxW(hWnd, L"Are you sure you want to quit?",
@@ -165,7 +251,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 					SendMessage(hWnd, WM_CLOSE, 0, 0);
 				}
-
 				break;
 			}
 

@@ -96,7 +96,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>C:\Users\Kamilek\source\repos\pdfViewer\pdfViewer\Debug\*.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Users\Kamilek\source\repos\pdfViewer\pdfViewer\Debug\*.obj;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
