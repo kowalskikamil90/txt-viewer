@@ -5,7 +5,7 @@
 class MockFileOpener : public FileOpener {
 public:
 	MOCK_METHOD1(openFile,
-		bool(OPENFILENAME *ofn));
+		OpResult(OPENFILENAME *ofn));
 	MOCK_METHOD0(validateFilePath,
 		OpResult());
 };

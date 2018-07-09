@@ -143,11 +143,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			case IDM_FILE_OPEN:
 			{
-				if (!OpenDialog(hWnd, &fod))
+				OpResult opRes = OpenDialog(hWnd, &fod);
+				if (opRes == OpResult::FAILURE)
 				{ 
 					// Non *.pdf file was chosen. Popup a message box.
 					MessageBoxW(NULL, L"Choose *.pdf file.", L"INFO", MB_OK | MB_ICONEXCLAMATION);
 				}
+				/*else if (opRes == OpResult::QUIT)
+				{
+					 User opened the dialog but clicked Cancel
+					 Do not pop up message box. 
+				}*/
 				break;
 			}
 			case IDM_FILE_QUIT:
@@ -256,7 +262,7 @@ void AddMenus(HWND hwnd) {
 /*
  * Opens 'openfile' dialog box and store filepath
  */
-bool OpenDialog(HWND hwnd, FileOpener *fo) {
+OpResult OpenDialog(HWND hwnd, FileOpener *fo) {
 
 	OPENFILENAME ofn;
 
@@ -272,18 +278,24 @@ bool OpenDialog(HWND hwnd, FileOpener *fo) {
 	ofn.lpstrFileTitle = NULL;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-	if (fo->openFile(&ofn))
+	OpResult res = fo->openFile(&ofn);
+
+	if (res == OpResult::SUCCESS)
 	{
 		if (fo->validateFilePath() == OpResult::SUCCESS)
 		{
-			return true;
+			return OpResult::SUCCESS;
 		}
-		else
+		else 
 		{
-			return false;
+			return OpResult::FAILURE;
 		}
 	}
-	else return false;
+	else
+	{
+		// Returns OpResult::FAILURE or OpResult::QUIT
+		return res;
+	}
 }
 
 static void destroyTheWindowAndCleanUp(HWND hWnd)

@@ -3,7 +3,8 @@
 // General type for any kind of boolean operations
 enum class OpResult {
 	SUCCESS,
-	FAILURE
+	FAILURE,
+	QUIT
 };
 
 // General type for rectangural dimensions.

@@ -2,15 +2,9 @@
 
 #include "WindowPlacer.h"
 
-
-WindowPlacer::WindowPlacer()
-{
-}
-
-WindowPlacer::~WindowPlacer()
-{
-}
-
+/*
+ * Returns size of the screen
+ */
 size2D WindowPlacer::getScreenSize()
 {
 	size2D screenSize(GetSystemMetrics(SM_CXSCREEN),
@@ -18,6 +12,9 @@ size2D WindowPlacer::getScreenSize()
 	return screenSize;
 }
 
+/*
+ * Returns the coordinates of center of the screen
+ */
 coordinates2D WindowPlacer::getScreenCenter()
 {
 	size2D screenSize = getScreenSize();
@@ -38,6 +35,9 @@ coordinates2D WindowPlacer::calculateCenteredWindowCoords(size2D wndSize)
 	return wndUpperLeftCorner;
 }
 
+/*
+ * places the window in the center of the screen
+ */
 void WindowPlacer::centerTheWindow(HWND hwnd)
 {
 	/* Place the window in the center */

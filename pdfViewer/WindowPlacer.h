@@ -8,8 +8,6 @@ class WindowPlacer
 {
 
 public:
-	WindowPlacer();
-	~WindowPlacer();
 
 	static size2D getScreenSize();
 	static coordinates2D getScreenCenter();

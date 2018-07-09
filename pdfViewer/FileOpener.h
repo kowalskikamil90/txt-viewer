@@ -13,7 +13,7 @@ protected:
 public:
 	FileOpener() {};
 	virtual ~FileOpener() {};
-	virtual bool openFile(OPENFILENAME *ofn) = 0;
+	virtual OpResult openFile(OPENFILENAME *ofn) = 0;
 	virtual OpResult validateFilePath() = 0;
 
 	/*

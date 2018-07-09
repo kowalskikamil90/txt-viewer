@@ -8,8 +8,7 @@
 using ::testing::_;
 using ::testing::Return;
 
-// Dummy test in order to setup and test the testing environment
-TEST(PdfViewerTests, openDialogTestSuccess)
+TEST(PdfViewerTests, openDialogSuccessTest)
 {
 	MockFileOpener mockFileOpener;
 	HWND hwnd;
@@ -20,17 +19,16 @@ TEST(PdfViewerTests, openDialogTestSuccess)
 	// Setup expectations and return values
 	EXPECT_CALL(mockFileOpener, openFile(_))
 		.Times(1)
-		.WillOnce(Return(true));
+		.WillOnce(Return(OpResult::SUCCESS));
 	EXPECT_CALL(mockFileOpener, validateFilePath())
 		.Times(1)
 		.WillOnce(Return(OpResult::SUCCESS));
 
 	// Test the actual function
-	EXPECT_TRUE(OpenDialog(hwnd, &mockFileOpener));
+	EXPECT_TRUE(OpenDialog(hwnd, &mockFileOpener) == OpResult::SUCCESS);
 }
 
-// Dummy test in order to setup and test the testing environment
-TEST(PdfViewerTests, openDialogTestOpenFileFailure)
+TEST(PdfViewerTests, openDialogOpenFileFailureTest)
 {
 	MockFileOpener mockFileOpener;
 	HWND hwnd;
@@ -39,16 +37,15 @@ TEST(PdfViewerTests, openDialogTestOpenFileFailure)
 	// Setup expectations and return values
 	EXPECT_CALL(mockFileOpener, openFile(_))
 		.Times(1)
-		.WillOnce(Return(false));
+		.WillOnce(Return(OpResult::FAILURE));
 	EXPECT_CALL(mockFileOpener, validateFilePath())
 		.Times(0);
 
 	// Test the actual function
-	EXPECT_FALSE(OpenDialog(hwnd, &mockFileOpener));
+	EXPECT_TRUE(OpenDialog(hwnd, &mockFileOpener) == OpResult::FAILURE);
 }
 
-// Dummy test in order to setup and test the testing environment
-TEST(PdfViewerTests, openDialogTestValidateFailure)
+TEST(PdfViewerTests, openDialogValidateFailureTest)
 {
 	MockFileOpener mockFileOpener;
 	HWND hwnd;
@@ -57,11 +54,28 @@ TEST(PdfViewerTests, openDialogTestValidateFailure)
 	// Setup expectations and return values
 	EXPECT_CALL(mockFileOpener, openFile(_))
 		.Times(1)
-		.WillOnce(Return(true));
+		.WillOnce(Return(OpResult::SUCCESS));
 	EXPECT_CALL(mockFileOpener, validateFilePath())
 		.Times(1)
 		.WillOnce(Return(OpResult::FAILURE));
 
 	// Test the actual function
-	EXPECT_FALSE(OpenDialog(hwnd, &mockFileOpener));
+	EXPECT_TRUE(OpenDialog(hwnd, &mockFileOpener) == OpResult::FAILURE);
+}
+
+TEST(PdfViewerTests, openDialogCloseOrCancelTest)
+{
+	MockFileOpener mockFileOpener;
+	HWND hwnd;
+	ZeroMemory(&hwnd, sizeof(HWND));
+
+	// Setup expectations and return values
+	EXPECT_CALL(mockFileOpener, openFile(_))
+		.Times(1)
+		.WillOnce(Return(OpResult::QUIT));
+	EXPECT_CALL(mockFileOpener, validateFilePath())
+		.Times(0);
+
+	// Test the actual function
+	EXPECT_TRUE(OpenDialog(hwnd, &mockFileOpener) == OpResult::QUIT);
 }

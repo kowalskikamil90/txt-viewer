@@ -13,8 +13,7 @@ public:
 
 	static PdfFileOpener& getInstance();
 
-	virtual ~PdfFileOpener();
-	virtual bool openFile(OPENFILENAME *ofn) override;
+	virtual OpResult openFile(OPENFILENAME *ofn) override;
 	virtual OpResult validateFilePath() override;
 };
 

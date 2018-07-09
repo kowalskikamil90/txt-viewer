@@ -1,13 +1,7 @@
 #include "stdafx.h"
 #include "PdfFileOpener.h"
 
-PdfFileOpener::PdfFileOpener()
-{
-}
-
-PdfFileOpener::~PdfFileOpener()
-{
-}
+PdfFileOpener::PdfFileOpener() {}
 
 /*
  * Get instance of the PdfFileOpener, Singleton style
@@ -21,18 +15,35 @@ PdfFileOpener& PdfFileOpener::getInstance()
 /*
  * Opens the 'open file' dialog
  */
-bool PdfFileOpener::openFile(OPENFILENAME *ofn)
+OpResult PdfFileOpener::openFile(OPENFILENAME *ofn)
 {
-	BOOL ret = GetOpenFileName(ofn);
-	if (ret)
+	if (GetOpenFileName(ofn))
 	{
-		/* Get file path and store it as a PTCHAR.
-		 * The first element (i.e. [0]) is 0 so skip it.
-		 * lpstrFile is only valid if opening succedeed.*/
-		wcscpy_s(filePath, ofn->lpstrFile);
+		if (wcslen(ofn->lpstrFile) > 0)
+		{
+			/* Get file path and store it as a PTCHAR.
+			* The first element (i.e. [0]) is 0 so skip it.
+			* lpstrFile is only valid if opening succedeed.
+			* This is the case when user picked a file and clicked OK.*/
+			wcscpy_s(filePath, ofn->lpstrFile);
+			return OpResult::SUCCESS;
+		}
 	}
-
-	return ret;
+	else
+	{
+		DWORD ret = CommDlgExtendedError();
+		if (ret == 0)
+		{
+			/* This is the case when user opened the dialog but clicked Cancel
+			 * or closed the dialog window.*/
+			return OpResult::QUIT;
+		}
+		else if (ret > 0)
+		{
+			// GetOpenFileName() failed
+			return OpResult::FAILURE;
+		}
+	}
 }
 
 /*
@@ -54,8 +65,8 @@ OpResult PdfFileOpener::validateFilePath()
 /*
  * Check if string ends with some other sting
  */
-bool PdfFileOpener::hasEnding
-  (PWCHAR fullString, PCWSTR ending) {
+bool PdfFileOpener::hasEnding(PWCHAR fullString, PCWSTR ending)
+{
 
 	// fullstring starts with NULL character
 	auto fsLen = wcslen(fullString+1);
