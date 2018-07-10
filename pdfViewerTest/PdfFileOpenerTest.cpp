@@ -13,7 +13,7 @@ TEST(PdfFileOpenerTests, singletonTest)
 
 TEST(PdfFileOpenerTests, validatePathSuccessTest)
 {
-	PdfFileOpener& pdfOpener = PdfFileOpener::getInstance();
+	FileOpener& pdfOpener = PdfFileOpener::getInstance();
 
 	pdfOpener.setFilePath(L"D://someDir/someFile.pdf");
 	EXPECT_EQ(pdfOpener.validateFilePath(), OpResult::SUCCESS);
@@ -30,7 +30,7 @@ TEST(PdfFileOpenerTests, validatePathSuccessTest)
 
 TEST(PdfFileOpenerTests, validatePathFailureTest)
 {
-	PdfFileOpener& pdfOpener = PdfFileOpener::getInstance();
+	FileOpener& pdfOpener = PdfFileOpener::getInstance();
 
 	pdfOpener.setFilePath(L".pdf");
 	EXPECT_EQ(pdfOpener.validateFilePath(), OpResult::FAILURE);

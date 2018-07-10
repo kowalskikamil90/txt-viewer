@@ -157,6 +157,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextLoader.h" />
     <ClInclude Include="TextLoaderTxt.h" />
+    <ClInclude Include="TxtFileOpener.h" />
     <ClInclude Include="WidgetPlacer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +171,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TextLoaderTxt.cpp" />
+    <ClCompile Include="TxtFileOpener.cpp" />
     <ClCompile Include="WidgetPlacer.cpp" />
   </ItemGroup>
   <ItemGroup>

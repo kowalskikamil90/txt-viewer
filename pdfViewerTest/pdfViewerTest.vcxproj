@@ -154,6 +154,7 @@
     <ClCompile Include="MockFileOpener.h" />
     <ClCompile Include="PdfFileOpenerTest.cpp" />
     <ClCompile Include="pdfViewerTest.cpp" />
+    <ClCompile Include="TxtFileOpenerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\gTestGMockStaticLib\gTestGMockStaticLib.vcxproj">

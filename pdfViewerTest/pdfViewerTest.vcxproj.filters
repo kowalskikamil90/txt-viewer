@@ -27,5 +27,8 @@
     <ClCompile Include="MockFileOpener.h">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="TxtFileOpenerTest.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

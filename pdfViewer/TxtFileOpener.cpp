@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "TxtFileOpener.h"
 
+TxtFileOpener::TxtFileOpener() {}
+
 /*
 * Get instance of the PdfFileOpener, Singleton style
 */
