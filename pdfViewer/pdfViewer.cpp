@@ -4,7 +4,7 @@
 #include "pdfViewer.h"
 #include "PdfFileOpener.h"
 #include "misc.h"
-#include "WindowPlacer.h"
+#include "WidgetPlacer.h"
 
 #include <Windows.h>
 #include <commctrl.h>
@@ -13,9 +13,11 @@
 #define MAX_LOADSTRING 100
 #define MAX_PAGE_DIGITS 4
 
-// ID for menu item
+// IDS for menu itemS
 #define IDM_FILE_OPEN 1
 #define IDM_FILE_QUIT 2
+
+// IDs for widgets
 #define ID_UPDOWN_PAGE 3
 #define ID_EDIT_PAGE 4
 #define ID_DEC_PAGE 5
@@ -29,7 +31,7 @@ WCHAR szFile[MAX_PATH];                         // Holds the path to the opened 
 WORD maxPos = 1, minPos = 0;
 
 // Global handles
-HWND hUpDown, hEdit;
+HWND hUpDown, hEdit, hStaticText, hLButton, hRButton, hTextArea;
 
 // Local functions declarations
 static void destroyTheWindowAndCleanUp(HWND hWnd);
@@ -159,43 +161,137 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			SendMessageW(hUpDown, UDM_SETRANGE, 0, MAKELPARAM(maxPos, minPos));
 			SendMessageW(hUpDown, UDM_SETPOS32, 0, 0);
 
-			CreateWindowW(L"Static", L"/ 1",
-				WS_CHILD | WS_VISIBLE | SS_LEFT,
-				120, 20, 25, 25,
-				hWnd, NULL, NULL, NULL);
+			hStaticText = CreateWindowW(L"Static", L"/ 1",
+                                       WS_CHILD | WS_VISIBLE | SS_LEFT,
+                                       120, 20, 25, 25,
+                                       hWnd, NULL, NULL, NULL);
 
 			// Add buttons for page navigation
-			CreateWindowW(L"Button", L"<",
-				WS_VISIBLE | WS_CHILD,
-				20, 150, 80, 25, hWnd, (HMENU)ID_DEC_PAGE, NULL, NULL);
-			CreateWindowW(L"Button", L">",
-				WS_VISIBLE | WS_CHILD,
-				120, 150, 80, 25, hWnd, (HMENU)ID_INC_PAGE, NULL, NULL);
+			hLButton = CreateWindowW(L"Button", L"<",
+				                     WS_VISIBLE | WS_CHILD,
+				                     20, 150, 80, 25, hWnd, (HMENU)ID_DEC_PAGE, NULL, NULL);
+			hRButton = CreateWindowW(L"Button", L">",
+				                     WS_VISIBLE | WS_CHILD,
+				                     120, 150, 80, 25, hWnd, (HMENU)ID_INC_PAGE, NULL, NULL);
 
 			// Add the actual text field
-			HWND hTextArea = CreateWindowW(L"Static", L"Szla dzieweczka \n,do laseczka \n,do zielonego\n,do zielonego!",
+			hTextArea = CreateWindowW(L"Static", L"Szla dzieweczka \n,do laseczka \n,do zielonego\n,do zielonego!",
 				WS_CHILD | WS_VISIBLE | SS_LEFT,
 				20, 200, 1200, 450,
 				hWnd, (HMENU)1, NULL, NULL);
 
-			// Create a font for text area
-			HFONT hFont = CreateFont(36, //height of character
-				                     16, //width of character
-				                     0,
-				                     0,
-				                     FW_DONTCARE,
-				                     FALSE,
-				                     TRUE,
-				                     FALSE,
-				                     DEFAULT_CHARSET,
-				                     OUT_OUTLINE_PRECIS,
-				                     CLIP_DEFAULT_PRECIS,
-				                     CLEARTYPE_QUALITY,
-				                     VARIABLE_PITCH,
-				                     TEXT("Times New Roman"));
+			/* POSITION ALL THE WIDGETS */
+			size2D screen = WidgetPlacer::getScreenSize();
+			size2D margin = WidgetPlacer::getPercentagePixels(Percentage::_1);
+			int panelXCoord = screen.x / 3;
+			int panelYCoord = margin.y;
 
-			// Send message to the text area to change the font
-			SendMessage(hTextArea, WM_SETFONT, (WPARAM)hFont, true);
+			/* WIDGETS: 'edit ' widget, 'upDown' widget, 'static txt' */
+			// Position following widgets: 'edit ' widget, 'upDown' widget, 'static txt' widget
+			coordinates2D editAndUpDownWidgetsCoords(panelXCoord, panelYCoord);
+
+			size2D editDims = WidgetPlacer::resizeAndPositonWidget(static_cast<int>(Percentage::_10),
+				                                                   static_cast<int>(Percentage::_5),
+				                                                   editAndUpDownWidgetsCoords,
+				                                                   hEdit);
+			size2D upDownDims = WidgetPlacer::resizeAndPositonWidget(static_cast<int>(Percentage::_3),
+				                                                     static_cast<int>(Percentage::_5),
+				                                                     editAndUpDownWidgetsCoords.addX(editDims),
+				                                                     hUpDown);
+			size2D staticTextDims = WidgetPlacer::resizeAndPositonWidget(static_cast<int>(Percentage::_10),
+				                                                         static_cast<int>(Percentage::_5),
+				                                                         editAndUpDownWidgetsCoords.addX(upDownDims).addX(editDims),
+				                                                         hStaticText);
+
+			// Set font for the following widgets: 'edit ' widget, 'upDown' widget, 'static txt' widget
+			int fontH = static_cast<int> (editDims.y * 0.9);
+			int fontW = static_cast<int> (fontH * 0.45);
+			HFONT hFont1 = CreateFontW(fontH, //height of character
+				                       fontW, //width of character
+                                       0,
+                                       0,
+                                       FW_DONTCARE,
+                                       FALSE,
+				                       FALSE,
+                                       FALSE,
+                                       DEFAULT_CHARSET,
+                                       OUT_OUTLINE_PRECIS,
+                                       CLIP_DEFAULT_PRECIS,
+                                       CLEARTYPE_QUALITY,
+                                       VARIABLE_PITCH,
+                                       TEXT("Times New Roman"));
+
+			// Send messages to actually set the font
+			SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont1, true);
+			SendMessage(hStaticText, WM_SETFONT, (WPARAM)hFont1, true);
+
+			/* WIDGETS: buttons for page navigation */
+
+			// Position the following widgets: buttons for page navigation
+			coordinates2D buttonsCords(panelXCoord, panelYCoord + editDims.y + margin.y);
+
+			size2D butsDims = WidgetPlacer::resizeAndPositonWidget(static_cast<int>(Percentage::_11),
+				                                                   static_cast<int>(Percentage::_5),
+				                                                   buttonsCords,
+				                                                   hLButton);
+			WidgetPlacer::resizeAndPositonWidget(static_cast<int>(Percentage::_11),
+                                                 static_cast<int>(Percentage::_5),
+				                                 buttonsCords.addX(butsDims).addX(margin),
+                                                 hRButton);
+
+			// Set font for the buttons widgets
+			fontH = static_cast<int> (butsDims.y * 0.9);
+			fontW = static_cast<int> (fontH * 0.6);;
+			HFONT hFont2 = CreateFontW(fontH, //height of character
+				                       fontW, //width of character
+				                       0,
+				                       0,
+				                       FW_DONTCARE,
+				                       FALSE,
+				                       FALSE,
+				                       FALSE,
+				                       DEFAULT_CHARSET,
+				                       OUT_OUTLINE_PRECIS,
+				                       CLIP_DEFAULT_PRECIS,
+				                       CLEARTYPE_QUALITY,
+				                       VARIABLE_PITCH,
+				                       TEXT("Times New Roman"));
+
+			// Send messages to actually set the font
+			SendMessage(hLButton, WM_SETFONT, (WPARAM)hFont2, true);
+			SendMessage(hRButton, WM_SETFONT, (WPARAM)hFont2, true);
+
+			/* WIDGETS: main text field */
+
+			// Position the main text field widget
+			coordinates2D tfCords(margin.x, buttonsCords.y + butsDims.y + margin.y);
+
+			WidgetPlacer::resizeAndPositonWidget(static_cast<int>(Percentage::_98),
+				                                 static_cast<int>(Percentage::_75),
+				                                 tfCords,
+				                                 hTextArea);
+
+			// Set font for the main text field - size same as panel widgets
+
+			fontH = static_cast<int> (editDims.y * 2);
+			fontW = static_cast<int> (fontH * 0.45);;
+			HFONT hFont3 = CreateFontW(fontH, //height of character
+				                       fontW, //width of character
+				                       0,
+				                       0,
+				                       FW_DONTCARE,
+				                       FALSE,
+				                       FALSE,
+				                       FALSE,
+				                       DEFAULT_CHARSET,
+				                       OUT_OUTLINE_PRECIS,
+				                       CLIP_DEFAULT_PRECIS,
+				                       CLEARTYPE_QUALITY,
+				                       VARIABLE_PITCH,
+				                       TEXT("Times New Roman"));
+
+			// Send messages to actually set the font
+			SendMessage(hTextArea, WM_SETFONT, (WPARAM)hFont3, true);
 
 			break;
 		}
@@ -303,7 +399,7 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_INITDIALOG:
 	{
 		// Place the window in the center
-		WindowPlacer::centerTheWindow(hDlg);
+		WidgetPlacer::centerTheWindow(hDlg);
 		return (INT_PTR)TRUE;
 	}
 

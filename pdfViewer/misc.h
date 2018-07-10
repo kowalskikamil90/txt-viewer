@@ -7,6 +7,18 @@ enum class OpResult {
 	QUIT
 };
 
+enum class Percentage {
+	_1 = 1,
+	_2 = 2,
+	_3 = 3,
+	_5 = 5,
+	_10 = 10,
+	_11 = 11,
+	_12 = 12,
+	_75 = 75,
+	_98 = 98
+};
+
 // General type for rectangural dimensions.
 struct size2D {
 	int x;
@@ -52,5 +64,20 @@ struct coordinates2D {
 	{
 		this->x = x;
 		this->y = y;
+	}
+
+	coordinates2D operator+(size2D toAdd)
+	{
+		return coordinates2D(this->x + toAdd.x, this->y + toAdd.y);
+	}
+
+	coordinates2D addX(size2D toAdd)
+	{
+		return coordinates2D(this->x + toAdd.x, this->y);
+	}
+
+	coordinates2D addY(size2D toAdd)
+	{
+		return coordinates2D(this->x, this->y + toAdd.y);
 	}
 };

@@ -87,4 +87,4 @@ bool PdfFileOpener::hasEnding(PWCHAR fullString, PCWSTR ending)
 	{
 		return false;
 	}
-  }
+}

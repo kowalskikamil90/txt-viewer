@@ -1,5 +1,4 @@
 #include "gtest/gtest.h"
-#include "../pdfViewer/FileOpener.h"
 #include "../pdfViewer/PdfFileOpener.h"
 
 #include <wchar.h>
