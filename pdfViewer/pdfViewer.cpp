@@ -5,6 +5,7 @@
 #include "PdfFileOpener.h"
 #include "misc.h"
 #include "WidgetPlacer.h"
+#include "TextLoaderTxt.h"
 
 #include <Windows.h>
 #include <commctrl.h>
@@ -29,6 +30,7 @@ WCHAR szTitle[MAX_LOADSTRING];                  // Title bar placeholder
 WCHAR szWindowClass[MAX_LOADSTRING];            // Class name for the main window
 WCHAR szFile[MAX_PATH];                         // Holds the path to the opened file
 WORD maxPos = 1, minPos = 0;
+TextInfo *ti = nullptr;
 
 // Global handles
 HWND hUpDown, hEdit, hStaticText, hLButton, hRButton, hTextArea;
@@ -192,7 +194,18 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				{ 
 					// Non *.pdf file was chosen. Popup a message box.
 					MessageBoxW(NULL, L"Choose *.pdf file.", L"INFO", MB_OK | MB_ICONEXCLAMATION);
+					break;
 				}
+				/* This is workaround due to difficulties with finding PDF parsing library
+				 * that suits requirements for this application. Instead of reading PDF we
+				 * read *txt files. When some good PDF parsing lib is found, it is adviced
+				 * to Implement the TextLoader interface in TextLoaderPdf class and use this
+				 * class instead */
+				TextLoader& tl = TextLoaderTxt::getInstance();
+				ti = tl.loadText(szFile);
+
+				//TODO: update text field, etc
+
 				break;
 			}
 
