@@ -3,6 +3,7 @@
 
 #include "pdfViewer.h"
 #include "PdfFileOpener.h"
+#include "TxtFileOpener.h"
 #include "misc.h"
 #include "WidgetPlacer.h"
 #include "TextLoaderTxt.h"
@@ -187,9 +188,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 			{
 				/* This is a singleton; NOTE: reference is needed.
 				 * Otherwise, copy constructor gets called.*/
-				PdfFileOpener& fod = PdfFileOpener::getInstance();
+				FileOpener& fo = TxtFileOpener::getInstance();
 
-				OpResult opRes = OpenDialog(hWnd, &fod);
+				OpResult opRes = OpenDialog(hWnd, &fo);
 				if (opRes == OpResult::FAILURE)
 				{ 
 					// Non *.pdf file was chosen. Popup a message box.
@@ -356,7 +357,7 @@ static void AddControls(HWND hWnd)
 		120, 150, 80, 25, hWnd, (HMENU)ID_INC_PAGE, NULL, NULL);
 
 	// Add the actual text field
-	hTextArea = CreateWindowW(L"Static", L"\n\nOpen a PDF file by selecting 'open' from 'file' menu.",
+	hTextArea = CreateWindowW(L"Static", L"\n\nOpen a TXT file by selecting 'open' from 'file' menu.",
 		WS_CHILD | WS_VISIBLE | SS_LEFT,
 		20, 200, 1200, 450,
 		hWnd, (HMENU)1, NULL, NULL);

@@ -1,13 +1,24 @@
 #pragma once
 
+// Types for defining file format to be read
+enum class FileFormat
+{
+	TXT,
+	PDF,
+	UNDEFINED
+};
+
 // General type for any kind of boolean operations
-enum class OpResult {
+enum class OpResult
+{
 	SUCCESS,
 	FAILURE,
 	QUIT
 };
 
-enum class Percentage {
+// Type for expressing the percentage of generaly anything
+enum class Percentage
+{
 	_1 = 1,
 	_2 = 2,
 	_3 = 3,
@@ -17,6 +28,7 @@ enum class Percentage {
 	_12 = 12,
 	_75 = 75,
 	_98 = 98
+	// Add more values when needed
 };
 
 // General type for rectangural dimensions.
