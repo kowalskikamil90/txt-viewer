@@ -12,4 +12,3 @@ public:
 	static TextLoaderTxt& getInstance();
 	virtual TextInfo* loadText(WCHAR *path);
 };
-

@@ -62,6 +62,9 @@
     <ClCompile Include="TextLoaderTxt.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="FileOpener.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="pdfViewer.rc">

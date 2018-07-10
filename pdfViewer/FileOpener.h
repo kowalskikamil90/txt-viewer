@@ -9,27 +9,13 @@ class FileOpener
 {
 protected:
 	WCHAR filePath[MAX_PATH];
+	bool hasEnding(PWCHAR fullString, PCWSTR ending);
 
 public:
 	FileOpener() {};
 	virtual ~FileOpener() {};
-	virtual OpResult openFile(OPENFILENAME *ofn) = 0;
+	virtual OpResult openFile(OPENFILENAME *ofn);
 	virtual OpResult validateFilePath() = 0;
-
-	/*
-	* Getter for filePath
-	*/
-	PWCHAR getFilePath()
-	{
-		return filePath;
-	}
-
-	/*
-	* Setter for filePath
-	*/
-	void setFilePath(PCWSTR path)
-	{
-		auto pathLen = wcslen(path);
-		wcsncpy_s(filePath, path, pathLen);
-	}
+	PWCHAR getFilePath();
+	void setFilePath(PCWSTR path);
 };

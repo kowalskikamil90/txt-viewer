@@ -166,12 +166,12 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 			/* Handle page-buttons messages */
 			case ID_DEC_PAGE:
 			{
-				// Implement when pdf parsing ready
+				// TODO: Implement when pdf parsing ready
 				break;
 			}
 			case ID_INC_PAGE:
 			{
-				// Implement when pdf parsing ready
+				// TODO: Implement when pdf parsing ready
 				break;
 			}
 
@@ -356,7 +356,7 @@ static void AddControls(HWND hWnd)
 		120, 150, 80, 25, hWnd, (HMENU)ID_INC_PAGE, NULL, NULL);
 
 	// Add the actual text field
-	hTextArea = CreateWindowW(L"Static", L"Open a PDF file by selecting\n'open' from 'file' menu.",
+	hTextArea = CreateWindowW(L"Static", L"\n\nOpen a PDF file by selecting 'open' from 'file' menu.",
 		WS_CHILD | WS_VISIBLE | SS_LEFT,
 		20, 200, 1200, 450,
 		hWnd, (HMENU)1, NULL, NULL);

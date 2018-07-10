@@ -160,6 +160,7 @@
     <ClInclude Include="WidgetPlacer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FileOpener.cpp" />
     <ClCompile Include="PdfFileOpener.cpp" />
     <ClCompile Include="pdfViewer.cpp" />
     <ClCompile Include="stdafx.cpp">

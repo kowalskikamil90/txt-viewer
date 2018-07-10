@@ -7,13 +7,11 @@ class PdfFileOpener :
 private:
 	//Private constructor in order to achive singleton pattern
 	PdfFileOpener();
-	bool hasEnding(PWCHAR fullString, PCWSTR ending);
 
 public:
 
 	static PdfFileOpener& getInstance();
 
-	virtual OpResult openFile(OPENFILENAME *ofn) override;
 	virtual OpResult validateFilePath() override;
 };
 
