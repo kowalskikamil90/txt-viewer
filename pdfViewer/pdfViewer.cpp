@@ -41,6 +41,7 @@ static LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 static INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 static void                AddMenus(HWND);
 static void                AddControls(HWND);
+static void                handleMessageBox(HWND hWnd);
 
 /*
  * This is the application entry point
@@ -198,13 +199,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 			/* Handle menu-quit item */
 			case IDM_FILE_QUIT:
 			{
-				int ret = MessageBoxW(hWnd, L"Are you sure you want to quit?",
-					L"Message", MB_OKCANCEL);
-
-				if (ret == IDOK) {
-
-					SendMessage(hWnd, WM_CLOSE, 0, 0);
-				}
+				handleMessageBox(hWnd);
 				break;
 			}
 
@@ -224,14 +219,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 	case WM_KEYDOWN:
 	{
 		if (wParam == VK_ESCAPE) {
-
-			int ret = MessageBoxW(hWnd, L"Are you sure you want to quit?",
-				L"Message", MB_OKCANCEL);
-
-			if (ret == IDOK) {
-
-				SendMessage(hWnd, WM_CLOSE, 0, 0);
-			}
+			handleMessageBox(hWnd);
 		}
 		break;
 	}
@@ -244,6 +232,17 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
     return 0;
+}
+
+static void handleMessageBox(HWND hWnd)
+{
+	int ret = MessageBoxW(hWnd, L"Are you sure you want to quit?",
+		L"Message", MB_OKCANCEL);
+
+	if (ret == IDOK) {
+
+		SendMessage(hWnd, WM_CLOSE, 0, 0);
+	}
 }
 
 /*
@@ -344,7 +343,7 @@ static void AddControls(HWND hWnd)
 		120, 150, 80, 25, hWnd, (HMENU)ID_INC_PAGE, NULL, NULL);
 
 	// Add the actual text field
-	hTextArea = CreateWindowW(L"Static", L"Szla dzieweczka \n,do laseczka \n,do zielonego\n,do zielonego!",
+	hTextArea = CreateWindowW(L"Static", L"Open a PDF file by selecting\n'open' from 'file' menu.",
 		WS_CHILD | WS_VISIBLE | SS_LEFT,
 		20, 200, 1200, 450,
 		hWnd, (HMENU)1, NULL, NULL);
