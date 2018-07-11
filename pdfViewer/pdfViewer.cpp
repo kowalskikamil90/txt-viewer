@@ -34,7 +34,7 @@ WORD maxPos = 1, minPos = 0;
 TextInfo *ti = nullptr;
 
 // Global handles
-HWND hWnd, hUpDown, hEdit, hStaticText, hLButton, hRButton, hTextArea;
+HWND hWnd, hEdit, hStaticText, hLButton, hRButton, hTextArea;
 
 // Local functions declarations
 static void                destroyTheWindowAndCleanUp(HWND hWnd);
@@ -338,19 +338,11 @@ static void AddControls(HWND hWnd)
 	icex.dwICC = ICC_UPDOWN_CLASS;
 	InitCommonControlsEx(&icex);
 
-	hUpDown = CreateWindowW(UPDOWN_CLASSW, NULL, WS_CHILD | WS_VISIBLE
-		| UDS_SETBUDDYINT | UDS_ALIGNRIGHT,
-		0, 0, 0, 0, hWnd, (HMENU)ID_UPDOWN_PAGE, NULL, NULL);
-
 	hEdit = CreateWindowExW(WS_EX_CLIENTEDGE, WC_EDITW, NULL, WS_CHILD
 		| WS_VISIBLE | ES_RIGHT, 15, 15, 70, 25, hWnd,
 		(HMENU)ID_EDIT_PAGE, NULL, NULL);
 
-	SendMessageW(hUpDown, UDM_SETBUDDY, (WPARAM)hEdit, 0);
-	SendMessageW(hUpDown, UDM_SETRANGE, 0, MAKELPARAM(maxPos, minPos));
-	SendMessageW(hUpDown, UDM_SETPOS32, 0, 0);
-
-	hStaticText = CreateWindowW(L"Static", L"/ 1",
+	hStaticText = CreateWindowW(L"Static", L"/ 1", // Start with page count equal to 1
 		WS_CHILD | WS_VISIBLE | SS_LEFT,
 		120, 20, 25, 25,
 		hWnd, NULL, NULL, NULL);
@@ -385,21 +377,15 @@ static void adjustSizeOfWidgets()
 	coordinates2D editAndUpDownWidgetsCoords(panelXCoord, panelYCoord);
 
 	size2D editDims = WidgetPlacer::resizeAndPositonWidgetInWnd(
-		static_cast<int>(Percentage::_10),
+		static_cast<int>(Percentage::_11),
 		static_cast<int>(Percentage::_5),
 		editAndUpDownWidgetsCoords,
 		hEdit,
 		hWnd);
-	size2D upDownDims = WidgetPlacer::resizeAndPositonWidgetInWnd(
-		static_cast<int>(Percentage::_3),
+	size2D staticTextDims = WidgetPlacer::resizeAndPositonWidgetInWnd(
+		static_cast<int>(Percentage::_11),
 		static_cast<int>(Percentage::_5),
 		editAndUpDownWidgetsCoords.addX(editDims),
-		hUpDown,
-		hWnd);
-	size2D staticTextDims = WidgetPlacer::resizeAndPositonWidgetInWnd(
-		static_cast<int>(Percentage::_10),
-		static_cast<int>(Percentage::_5),
-		editAndUpDownWidgetsCoords.addX(upDownDims).addX(editDims),
 		hStaticText,
 		hWnd);
 
@@ -438,7 +424,7 @@ static void adjustSizeOfWidgets()
 		hLButton,
 		hWnd);
 	WidgetPlacer::resizeAndPositonWidgetInWnd(static_cast<int>(
-		Percentage::_11),
+		Percentage::_10),
 		static_cast<int>(Percentage::_5),
 		buttonsCords.addX(butsDims).addX(margin),
 		hRButton,
@@ -473,14 +459,14 @@ static void adjustSizeOfWidgets()
 	coordinates2D tfCords(margin.x, buttonsCords.y + butsDims.y + margin.y);
 
 	WidgetPlacer::resizeAndPositonWidgetInWnd(
-		static_cast<int>(Percentage::_98),
+		static_cast<int>(Percentage::_97),
 		static_cast<int>(Percentage::_75),
 		tfCords,
 		hTextArea,
 		hWnd);
 
 	// Set font for the main text field - size same as panel widgets
-	fontH = static_cast<int> (editDims.y * 2);
+	fontH = static_cast<int> (0.75 * editDims.y + 0.3 * editDims.x);
 	fontW = static_cast<int> (fontH * 0.45);;
 	HFONT hFont3 = CreateFontW(
 		fontH, //height of character

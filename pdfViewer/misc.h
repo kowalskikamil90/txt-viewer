@@ -27,6 +27,7 @@ enum class Percentage
 	_11 = 11,
 	_12 = 12,
 	_75 = 75,
+	_97 = 97,
 	_98 = 98
 	// Add more values when needed
 };
