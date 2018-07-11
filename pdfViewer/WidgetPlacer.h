@@ -4,6 +4,11 @@
 
 #include <Windows.h>
 
+/*
+ * This class acts as a primitive layout manager.
+ * It enables to place widgets in a relatively simple way,
+ * in reference to both screen and window.
+ */
 class WidgetPlacer
 {
 

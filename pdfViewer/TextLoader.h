@@ -1,14 +1,15 @@
 #pragma once
 
 #include <Esent.h>
+#include <vector>
+#include <string>
 
 // Auxiliary struct for storing loaded text information
 struct TextInfo
 {
 	int numOfPages;
-	/* Field For storing the actual text for each page.
-	* Needs to be dynamically allocated. Double pointer. */
-	WCHAR **pagesText;
+	// Stores ASCII characters
+	std::vector<std::string> lines;
 };
 
 // Interface for text loaders for different file formats
@@ -16,6 +17,8 @@ class TextLoader
 {
 protected:
 	TextInfo textInfo;
+	bool AsciiToUnicode(const char * szAscii, wchar_t * szUnicode);
+	bool UnicodeToAscii(const wchar_t * szUnicode, char * szAscii);
 
 public:
 	TextLoader() {};
