@@ -205,8 +205,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				 * class instead */
 				TextLoader& tl = TextLoaderTxt::getInstance();
 				ti = tl.loadText(szFile);
-
-				//TODO: update text field, etc
+				SetWindowTextW(hTextArea, ti->lines.front().c_str());
 
 				break;
 			}

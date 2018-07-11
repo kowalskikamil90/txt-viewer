@@ -2,7 +2,6 @@
 #include "TextLoaderTxt.h"
 
 #include <fstream>
-#include <cassert>
 
 TextLoaderTxt::TextLoaderTxt() {}
 
@@ -20,26 +19,28 @@ TextLoaderTxt& TextLoaderTxt::getInstance()
  */
 TextInfo* TextLoaderTxt::loadText(WCHAR *path)
 {
-	// Decided to use native C++ library here
+	/* Decided to use native C++ library here */
 
 	// Need to translate path from UNICODE to ASCII
-	char asciiPath[256];
+	char asciiPath[MAX_PATH];
 	if (UnicodeToAscii(path, asciiPath))
 	{
 		// Open the file
 		std::ifstream file(asciiPath);
 		std::string line;
+		std::wstring wlineStr;
+		// A line of total 400 characters may be stored here
+		wchar_t wline[4000];
+
+		// Currently this function supports only ASCII-encoded files
+		// Will not work with UNICODE files - will read bushes.
 		while (std::getline(file, line))
 		{
-			textInfo.lines.push_back(line);
+			AsciiToUnicode(line.c_str(), wline);
+			wlineStr = wline;
+			textInfo.lines.push_back(wlineStr);
 		}
 	}
-	else
-	{
-		// Should not end up herte. Crash the app for now.
-		assert(false);
-	}
-
 
 	return &textInfo;
 }
