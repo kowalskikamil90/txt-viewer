@@ -105,9 +105,9 @@ size2D WidgetPlacer::resizeAndPositonWidget(int screenWPercentage,
 }
 
 /*
-* Sets widget size according to main window's width and height percentage
-* and places it in specified place. Returns dimensions of the widget.
-*/
+ * Sets widget size according to main window's width and height percentage
+ * and places it in specified place. Returns dimensions of the widget.
+ */
 size2D WidgetPlacer::resizeAndPositonWidgetInWnd(int wndWPercentage,
 	                                            int wndHPercentage,
 	                                            coordinates2D position,

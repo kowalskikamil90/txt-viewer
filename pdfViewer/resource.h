@@ -1,7 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by pdfViewer.rc
-//
 
 #define IDS_APP_TITLE			103
 
@@ -16,7 +15,8 @@
 #define IDC_MYICON				2
 #ifndef IDC_STATIC
 #define IDC_STATIC				-1
-#endif 
+#endif
+
 // Default values for new objects
 //
 #ifdef APSTUDIO_INVOKED

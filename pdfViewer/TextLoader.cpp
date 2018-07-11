@@ -2,6 +2,9 @@
 
 #include "TextLoader.h"
 
+/*
+ * Conversion from ASCII to UNICODE
+ */
 bool TextLoader::AsciiToUnicode(const char * szAscii, wchar_t * szUnicode)
 {
 	int len, i;
@@ -13,6 +16,9 @@ bool TextLoader::AsciiToUnicode(const char * szAscii, wchar_t * szUnicode)
 	return true;
 }
 
+/*
+ * Conversion from UNICODE to ASCII
+ */
 bool TextLoader::UnicodeToAscii(const wchar_t * szUnicode, char * szAscii)
 {
 	int len, i;
@@ -24,6 +30,9 @@ bool TextLoader::UnicodeToAscii(const wchar_t * szUnicode, char * szAscii)
 	return true;
 }
 
+/*
+ * Clear all textinfo-related data
+ */
 void TextLoader::initializeTextLoader()
 {
 	textInfo.numOfPages = 0;

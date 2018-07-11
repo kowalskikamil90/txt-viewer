@@ -1,4 +1,3 @@
-// This needs to be the first include
 #include "stdafx.h"
 
 #include "pdfViewer.h"
@@ -27,13 +26,12 @@
 
 // Global variables
 HINSTANCE hInst;
-WCHAR szTitle[MAX_LOADSTRING];                  // Title bar placeholder
-WCHAR szWindowClass[MAX_LOADSTRING];            // Class name for the main window
-WCHAR szFile[MAX_PATH];                         // Holds the path to the opened file
-WORD maxPos = 1, minPos = 0;
-int currentPage = 0;
-TextInfo *ti = nullptr;
-bool fileChosen = false;
+WCHAR titleBuff[MAX_LOADSTRING];                   // Title bar placeholder
+WCHAR wndClassNameBuff[MAX_LOADSTRING];            // Class name for the main window
+WCHAR filePathBuff[MAX_PATH];                      // Holds the path to the opened file
+int currentPage = 0;                               // Holds the current page being displayed
+TextInfo *txtInfoHndl = nullptr;                   // Handle to text info struct
+bool fileChosen = false;                           // Holds info if the file was chosen
 
 // Global handles
 HWND hWnd, hEdit, hStaticText, hLButton, hRButton, hTextArea;
@@ -66,8 +64,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // Initialize global strings
-    LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_PDFVIEWER, szWindowClass, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDS_APP_TITLE, titleBuff, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_PDFVIEWER, wndClassNameBuff, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     // Initialize the application
@@ -96,7 +94,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 /* LOCAL FUNCTIONS DEFINITIONS */
 
 /*
- * Registers a window class.
+ * Registers a window class for main window.
  */
 static ATOM MyRegisterClass(HINSTANCE hInstance)
 {
@@ -113,7 +111,7 @@ static ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hCursor        = LoadCursor(nullptr, IDC_HAND);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
 	wcex.lpszMenuName   = 0;
-    wcex.lpszClassName  = szWindowClass;
+    wcex.lpszClassName  = wndClassNameBuff;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
     return RegisterClassExW(&wcex);
@@ -127,7 +125,7 @@ static BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    //Assign to global variable
    hInst = hInstance;
 
-   hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   hWnd = CreateWindowW(wndClassNameBuff, titleBuff, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
@@ -214,17 +212,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		adjustSizeOfWidgets();
 		break;
     }
-    case WM_PAINT:
-    {
-        PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(hWnd, &ps);
-        // TODO: Add here painting code that uses hdc element...
-        EndPaint(hWnd, &ps);
-     	break;
-    }
 	case WM_KEYDOWN:
 	{
-		// TODO: these keys work only when no other widget is focused
 		switch (wParam)
 		{
 		case VK_ESCAPE:
@@ -282,13 +271,13 @@ static void openFileProcedure()
 		* to Implement the TextLoader interface in TextLoaderPdf class and use this
 		* class instead */
 		TextLoader& tl = TextLoaderTxt::getInstance();
-		tl.loadText(szFile);
-		ti = tl.divideTextIntoPages();
+		tl.loadText(filePathBuff);
+		txtInfoHndl = tl.divideTextIntoPages();
 
-		SetWindowTextW(hTextArea, ti->pages.at(0).c_str());
+		SetWindowTextW(hTextArea, txtInfoHndl->pages.at(0).c_str());
 
 		/* Convert age number to WCHAR and set the number of pages */
-		int pages = ti->numOfPages;
+		int pages = txtInfoHndl->numOfPages;
 
 		// Buffer for 'page' string
 		wchar_t pagesStr[10];
@@ -322,13 +311,13 @@ static void switchToNextPage()
 {
 	if (fileChosen)
 	{
-		if (currentPage < ti->numOfPages)
+		if (currentPage < txtInfoHndl->numOfPages)
 		{
 			currentPage++;
 			wchar_t pageStr[10];
 			swprintf_s(pageStr, L"%d", currentPage);
 			SetWindowTextW(hEdit, pageStr);
-			SetWindowTextW(hTextArea, ti->pages.at(currentPage - 1).c_str());
+			SetWindowTextW(hTextArea, txtInfoHndl->pages.at(currentPage - 1).c_str());
 		}
 	}
 }
@@ -346,7 +335,7 @@ static void switchToPreviousPage()
 			wchar_t pageStr[10];
 			swprintf_s(pageStr, L"%d", currentPage);
 			SetWindowTextW(hEdit, pageStr);
-			SetWindowTextW(hTextArea, ti->pages.at(currentPage - 1).c_str());
+			SetWindowTextW(hTextArea, txtInfoHndl->pages.at(currentPage - 1).c_str());
 		}
 	}
 }
@@ -584,10 +573,10 @@ OpResult OpenDialog(HWND hwnd, FileOpener *fo) {
 
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
-	ofn.lpstrFile = szFile;
+	ofn.lpstrFile = filePathBuff;
 	ofn.lpstrFile[0] = '\0';
 	ofn.hwndOwner = hwnd;
-	ofn.nMaxFile = sizeof(szFile);
+	ofn.nMaxFile = sizeof(filePathBuff);
 	ofn.lpstrFilter = TEXT("All files(*.*)\0*.*\0");
 	ofn.nFilterIndex = 1;
 	ofn.lpstrInitialDir = NULL;

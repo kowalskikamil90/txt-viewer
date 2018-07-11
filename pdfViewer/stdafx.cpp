@@ -3,5 +3,3 @@
 // stdafx.obj included precompiled information
 
 #include "stdafx.h"
-
-// TODO: include here headers that you need in STDAFX.H and NOT in this file

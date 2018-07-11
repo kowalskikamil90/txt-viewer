@@ -4,8 +4,8 @@
 TxtFileOpener::TxtFileOpener() {}
 
 /*
-* Get instance of the PdfFileOpener, Singleton style
-*/
+ * Get instance of the PdfFileOpener, Singleton style
+ */
 TxtFileOpener& TxtFileOpener::getInstance()
 {
 	static TxtFileOpener instance;
@@ -13,8 +13,8 @@ TxtFileOpener& TxtFileOpener::getInstance()
 }
 
 /*
-* Validates if the file path ends with ".pdf"
-*/
+ * Validates if the file path ends with ".pdf"
+ */
 OpResult TxtFileOpener::validateFilePath()
 {
 	PCWSTR txtEnding = L".txt";

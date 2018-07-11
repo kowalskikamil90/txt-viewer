@@ -5,6 +5,5 @@
 #include "FileOpener.h"
 #include "misc.h"
 
-// Forward declarations
+/* Global function declarations */
 OpResult OpenDialog(HWND hwnd, FileOpener *fo);
- 

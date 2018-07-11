@@ -8,7 +8,7 @@
 struct TextInfo
 {
 	int numOfPages;
-	// Stores UNICODE characters
+	// Store UNICODE characters
 	std::vector<std::wstring> lines;
 	std::vector<std::wstring> pages;
 };

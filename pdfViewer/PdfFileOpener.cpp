@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include "PdfFileOpener.h"
 
 PdfFileOpener::PdfFileOpener() {}
