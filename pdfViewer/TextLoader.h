@@ -8,8 +8,9 @@
 struct TextInfo
 {
 	int numOfPages;
-	// Stores ASCII characters
+	// Stores UNICODE characters
 	std::vector<std::wstring> lines;
+	std::vector<std::wstring> pages;
 };
 
 // Interface for text loaders for different file formats
@@ -22,6 +23,7 @@ public:
 	TextLoader() {};
 	virtual ~TextLoader() {};
 	virtual TextInfo* loadText(WCHAR *path) = 0;
+	virtual TextInfo* divideTextIntoPages() = 0;
 
 	bool AsciiToUnicode(const char * szAscii, wchar_t * szUnicode);
 	bool UnicodeToAscii(const wchar_t * szUnicode, char * szAscii);

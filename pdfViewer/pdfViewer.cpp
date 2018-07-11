@@ -205,7 +205,18 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				 * class instead */
 				TextLoader& tl = TextLoaderTxt::getInstance();
 				ti = tl.loadText(szFile);
-				SetWindowTextW(hTextArea, ti->lines.front().c_str());
+				SetWindowTextW(hTextArea, ti->lines.at(0).c_str());
+
+				tl.divideTextIntoPages();
+
+				// Convert age number to WCHAR and set the number of pages
+				int pages = ti->numOfPages;
+				wchar_t pagesStr[10];
+				swprintf_s(pagesStr, L"/ %d", pages);
+				SetWindowTextW(hStaticText, pagesStr);
+
+				// Set the current page as the first page
+				SetWindowTextW(hEdit, L"1");
 
 				break;
 			}
