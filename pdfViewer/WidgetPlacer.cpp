@@ -13,11 +13,34 @@ size2D WidgetPlacer::getScreenSize()
 }
 
 /*
+ * Returns size of the window
+ */
+size2D WidgetPlacer::getWindowSize(HWND hwnd)
+{
+	RECT wndRect;
+	GetWindowRect(hwnd, &wndRect);
+	size2D wndSize(wndRect.right - wndRect.left,
+		           wndRect.bottom - wndRect.top);
+	return wndSize;
+}
+
+/*
  * Returns the coordinates of center of the screen
  */
 coordinates2D WidgetPlacer::getScreenCenter()
 {
 	size2D screenSize = getScreenSize();
+	screenSize = screenSize / 2;
+	coordinates2D coord(screenSize.x, screenSize.y);
+	return coord;
+}
+
+/*
+ * Returns the coordinates of center of the window
+ */
+coordinates2D WidgetPlacer::getWindowCenter(HWND hwnd)
+{
+	size2D screenSize = getWindowSize(hwnd);
 	screenSize = screenSize / 2;
 	coordinates2D coord(screenSize.x, screenSize.y);
 	return coord;
@@ -59,9 +82,9 @@ void WidgetPlacer::centerTheWindow(HWND hwnd)
  * and places it in specified place. Returns dimensions of the widget.
  */
 size2D WidgetPlacer::resizeAndPositonWidget(int screenWPercentage,
-	                                      int screenHPercentage,
-                                          coordinates2D position,
-	                                      HWND hWidget)
+	                                        int screenHPercentage,
+                                            coordinates2D position,
+	                                        HWND hWidget)
 {
 	// Get screen width and height
 	size2D screen = getScreenSize();
@@ -81,12 +104,44 @@ size2D WidgetPlacer::resizeAndPositonWidget(int screenWPercentage,
 	return dimensions;
 }
 
+/*
+* Sets widget size according to main window's width and height percentage
+* and places it in specified place. Returns dimensions of the widget.
+*/
+size2D WidgetPlacer::resizeAndPositonWidgetInWnd(int wndWPercentage,
+	                                            int wndHPercentage,
+	                                            coordinates2D position,
+	                                            HWND hWidget,
+	                                            HWND mainWindow)
+{
+	// Get screen width and height
+	size2D windowSize = getWindowSize(mainWindow);
+
+	// Calculate wanted dimensions of the widget (in pixels)
+	size2D dimensions(static_cast<int> ((wndWPercentage) / 100.0 * windowSize.x),
+		static_cast<int> ((wndHPercentage) / 100.0 * windowSize.y));
+
+	// Need to place the window relatively to the main window
+	RECT wndRect;
+	GetWindowRect(mainWindow, &wndRect);
+
+	SetWindowPos(
+		hWidget,
+		HWND_TOP, // Z axis order
+		position.x,// + wndRect.left,
+		position.y,// + wndRect.top,
+		dimensions.x,
+		dimensions.y,
+		SWP_SHOWWINDOW | SWP_DRAWFRAME);
+
+	return dimensions;
+}
 
 /*
  * Returns the number of pixel (width and height) associated to
- * the percentage of the application window.
+ * the percentage of the screen.
  */
-size2D WidgetPlacer::getPercentagePixels(Percentage p)
+size2D WidgetPlacer::getPercentagePixelsOfScreen(Percentage p)
 {
 	// Get screen width and height
 	size2D screen = getScreenSize();
@@ -94,4 +149,18 @@ size2D WidgetPlacer::getPercentagePixels(Percentage p)
 	// Calculate wanted dimensions of the widget (in pixels)
 	return size2D(static_cast<int> (static_cast<int>(p)/100.0 * screen.x),
 		          static_cast<int> (static_cast<int>(p)/100.0 * screen.y));
+}
+
+/*
+* Returns the number of pixel (width and height) associated to
+* the percentage of the application window.
+*/
+size2D WidgetPlacer::getPercentagePixelsOfWindow(Percentage p, HWND hwnd)
+{
+	// Get screen width and height
+	size2D wndSize = getWindowSize(hwnd);
+
+	// Calculate wanted dimensions of the widget (in pixels)
+	return size2D(static_cast<int> (static_cast<int>(p) / 100.0 * wndSize.x),
+		static_cast<int> (static_cast<int>(p) / 100.0 * wndSize.y));
 }
