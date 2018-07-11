@@ -23,3 +23,10 @@ bool TextLoader::UnicodeToAscii(const wchar_t * szUnicode, char * szAscii)
 		*szAscii++ = static_cast<char>(*szUnicode++);
 	return true;
 }
+
+void TextLoader::initializeTextLoader()
+{
+	textInfo.numOfPages = 0;
+	textInfo.lines.clear();
+	textInfo.pages.clear();
+}

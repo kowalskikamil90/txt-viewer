@@ -159,6 +159,7 @@
     <ClInclude Include="TextLoaderTxt.h" />
     <ClInclude Include="TxtFileOpener.h" />
     <ClInclude Include="WidgetPlacer.h" />
+    <ClInclude Include="wstringHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FileOpener.cpp" />

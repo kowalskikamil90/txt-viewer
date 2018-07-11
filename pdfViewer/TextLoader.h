@@ -18,6 +18,7 @@ class TextLoader
 {
 protected:
 	TextInfo textInfo;
+	void initializeTextLoader();
 
 public:
 	TextLoader() {};

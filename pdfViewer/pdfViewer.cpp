@@ -31,7 +31,9 @@ WCHAR szTitle[MAX_LOADSTRING];                  // Title bar placeholder
 WCHAR szWindowClass[MAX_LOADSTRING];            // Class name for the main window
 WCHAR szFile[MAX_PATH];                         // Holds the path to the opened file
 WORD maxPos = 1, minPos = 0;
+int currentPage = 0;
 TextInfo *ti = nullptr;
+bool fileChosen = false;
 
 // Global handles
 HWND hWnd, hEdit, hStaticText, hLButton, hRButton, hTextArea;
@@ -46,6 +48,9 @@ static void                AddMenus(HWND);
 static void                AddControls(HWND);
 static void                handleMessageBox(HWND hWnd);
 static void                adjustSizeOfWidgets();
+static void                switchToPreviousPage();
+static void                switchToNextPage();
+static void                openFileProcedure();
 
 /*
  * This is the application entry point
@@ -168,12 +173,12 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 			/* Handle page-buttons messages */
 			case ID_DEC_PAGE:
 			{
-				// TODO: Implement when pdf parsing ready
+				switchToPreviousPage();
 				break;
 			}
 			case ID_INC_PAGE:
 			{
-				// TODO: Implement when pdf parsing ready
+				switchToNextPage();
 				break;
 			}
 
@@ -187,37 +192,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 			/* Handle menu-open item */
 			case IDM_FILE_OPEN:
 			{
-				/* This is a singleton; NOTE: reference is needed.
-				 * Otherwise, copy constructor gets called.*/
-				FileOpener& fo = TxtFileOpener::getInstance();
-
-				OpResult opRes = OpenDialog(hWnd, &fo);
-				if (opRes == OpResult::FAILURE)
-				{ 
-					// Non *.pdf file was chosen. Popup a message box.
-					MessageBoxW(NULL, L"Choose *.pdf file.", L"INFO", MB_OK | MB_ICONEXCLAMATION);
-					break;
-				}
-				/* This is workaround due to difficulties with finding PDF parsing library
-				 * that suits requirements for this application. Instead of reading PDF we
-				 * read *txt files. When some good PDF parsing lib is found, it is adviced
-				 * to Implement the TextLoader interface in TextLoaderPdf class and use this
-				 * class instead */
-				TextLoader& tl = TextLoaderTxt::getInstance();
-				ti = tl.loadText(szFile);
-				SetWindowTextW(hTextArea, ti->lines.at(0).c_str());
-
-				tl.divideTextIntoPages();
-
-				// Convert age number to WCHAR and set the number of pages
-				int pages = ti->numOfPages;
-				wchar_t pagesStr[10];
-				swprintf_s(pagesStr, L"/ %d", pages);
-				SetWindowTextW(hStaticText, pagesStr);
-
-				// Set the current page as the first page
-				SetWindowTextW(hEdit, L"1");
-
+				openFileProcedure();
 				break;
 			}
 
@@ -249,8 +224,24 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     }
 	case WM_KEYDOWN:
 	{
-		if (wParam == VK_ESCAPE) {
-			handleMessageBox(hWnd);
+		// TODO: these keys work only when no other widget is focused
+		switch (wParam)
+		{
+		case VK_ESCAPE:
+			{
+				handleMessageBox(hWnd);
+				break;
+			}
+		case VK_LEFT:
+			{
+				switchToPreviousPage();
+				break;
+			}
+		case VK_RIGHT:
+			{
+				switchToNextPage();
+				break;
+			}
 		}
 		break;
 	}
@@ -265,6 +256,54 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     return 0;
 }
 
+/*
+ * The entire procedure of opening the file and loading text into the window
+ */
+static void openFileProcedure()
+{
+	/* This is a singleton; NOTE: reference is needed.
+	* Otherwise, copy constructor gets called.*/
+	FileOpener& fo = TxtFileOpener::getInstance();
+
+	OpResult opRes = OpenDialog(hWnd, &fo);
+	if (opRes == OpResult::FAILURE)
+	{
+		// Non *.pdf file was chosen. Popup a message box.
+		MessageBoxW(NULL, L"Choose *.pdf file.", L"INFO", MB_OK | MB_ICONEXCLAMATION);
+	}
+	else if (opRes == OpResult::SUCCESS)
+	{
+		// The file has been successfuly chosen
+		fileChosen = true;
+
+		/* This is workaround due to difficulties with finding PDF parsing library
+		* that suits requirements for this application. Instead of reading PDF we
+		* read *txt files. When some good PDF parsing lib is found, it is adviced
+		* to Implement the TextLoader interface in TextLoaderPdf class and use this
+		* class instead */
+		TextLoader& tl = TextLoaderTxt::getInstance();
+		tl.loadText(szFile);
+		ti = tl.divideTextIntoPages();
+
+		SetWindowTextW(hTextArea, ti->pages.at(0).c_str());
+
+		/* Convert age number to WCHAR and set the number of pages */
+		int pages = ti->numOfPages;
+
+		// Buffer for 'page' string
+		wchar_t pagesStr[10];
+		swprintf_s(pagesStr, L"/ %d", pages);
+		SetWindowTextW(hStaticText, pagesStr);
+
+		// Set the current page as the first page
+		currentPage = 1;
+		SetWindowTextW(hEdit, L"1");
+	}
+}
+
+/*
+ * Handling the 'quit' message box
+ */
 static void handleMessageBox(HWND hWnd)
 {
 	int ret = MessageBoxW(hWnd, L"Are you sure you want to quit?",
@@ -273,6 +312,42 @@ static void handleMessageBox(HWND hWnd)
 	if (ret == IDOK) {
 
 		SendMessage(hWnd, WM_CLOSE, 0, 0);
+	}
+}
+
+/*
+ * Switches text area to dispaly next page
+ */
+static void switchToNextPage()
+{
+	if (fileChosen)
+	{
+		if (currentPage < ti->numOfPages)
+		{
+			currentPage++;
+			wchar_t pageStr[10];
+			swprintf_s(pageStr, L"%d", currentPage);
+			SetWindowTextW(hEdit, pageStr);
+			SetWindowTextW(hTextArea, ti->pages.at(currentPage - 1).c_str());
+		}
+	}
+}
+
+/*
+ * Switches text area to dispaly previous page
+ */
+static void switchToPreviousPage()
+{
+	if (fileChosen)
+	{
+		if (currentPage > 1)
+		{
+			currentPage--;
+			wchar_t pageStr[10];
+			swprintf_s(pageStr, L"%d", currentPage);
+			SetWindowTextW(hEdit, pageStr);
+			SetWindowTextW(hTextArea, ti->pages.at(currentPage - 1).c_str());
+		}
 	}
 }
 

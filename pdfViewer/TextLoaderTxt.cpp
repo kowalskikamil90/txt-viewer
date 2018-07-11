@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "TextLoaderTxt.h"
+#include "wstringHelpers.h"
 
 #include <fstream>
 #include <algorithm>
 
-#define CHARS_PER_PAGE 200
+#define CHARS_PER_PAGE 250
 
 #define space L' '
 #define newLine L'\n'
@@ -26,6 +27,9 @@ TextLoaderTxt& TextLoaderTxt::getInstance()
 TextInfo* TextLoaderTxt::loadText(WCHAR *path)
 {
 	/* Decided to use native C++ library here */
+
+	// This is needed if the file is opened fe times in the same app run
+	initializeTextLoader();
 
 	// Need to translate path from UNICODE to ASCII
 	char asciiPath[MAX_PATH];
@@ -85,8 +89,8 @@ TextInfo* TextLoaderTxt::divideTextIntoPages()
 			// i.e space or newline
 			currentCharDelta = findNextSpaceOrNewLine(entireText, currentCharIndex);
 			length = CHARS_PER_PAGE + currentCharDelta;
-			page = entireText.substr(currentCharIndex, length);
-			textInfo.pages.push_back(page);
+			page = entireText.substr(currentCharIndex - CHARS_PER_PAGE, length);
+			
 			// Move foreward the current character, by the value of delta
 			currentCharIndex += currentCharDelta;
 		}
@@ -95,9 +99,13 @@ TextInfo* TextLoaderTxt::divideTextIntoPages()
 			/* In this case we reached the end of file and need to
 			 * make the last page out of whatever is left. */
 			length = entireLen - currentCharIndex;
-			page = entireText.substr(currentCharIndex, length);
-			textInfo.pages.push_back(page);
+			page = entireText.substr(currentCharIndex - CHARS_PER_PAGE, length);
 		}
+
+		// Trim whitespaces from the beginning and the ending of the string
+		trim(page);
+		textInfo.pages.push_back(page);
+
 		textInfo.numOfPages++;
 	}
 
@@ -127,6 +135,6 @@ int TextLoaderTxt::findNextSpaceOrNewLine(std::wstring  entireText, int currentC
 {
 	std::wstring::iterator currentIt = entireText.begin() + currentCharIndex;
 	std::wstring::iterator foundIt = std::find_if(currentIt, entireText.end(), TextLoaderTxt::spaceOrNewLine);
-	int foundIndex = foundIt - entireText.begin();
+	int foundIndex = (foundIt - entireText.begin()) - currentCharIndex;
 	return foundIndex;
 }
