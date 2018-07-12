@@ -109,7 +109,7 @@ static ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PDFVIEWER));
     wcex.hCursor        = LoadCursor(nullptr, IDC_HAND);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
+	wcex.hbrBackground = (HBRUSH)(CreateSolidBrush(RGB(245, 128, 26)));
 	wcex.lpszMenuName   = 0;
     wcex.lpszClassName  = wndClassNameBuff;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -257,8 +257,8 @@ static void openFileProcedure()
 	OpResult opRes = OpenDialog(hWnd, &fo);
 	if (opRes == OpResult::FAILURE)
 	{
-		// Non *.pdf file was chosen. Popup a message box.
-		MessageBoxW(NULL, L"Choose *.pdf file.", L"INFO", MB_OK | MB_ICONEXCLAMATION);
+		// Non *.txt file was chosen. Popup a message box.
+		MessageBoxW(NULL, L"Choose TXT file.", L"INFO", MB_OK | MB_ICONEXCLAMATION);
 	}
 	else if (opRes == OpResult::SUCCESS)
 	{
@@ -497,8 +497,8 @@ static void adjustSizeOfWidgets()
 		buttonsCords,
 		hLButton,
 		hWnd);
-	WidgetPlacer::resizeAndPositonWidgetInWnd(static_cast<int>(
-		Percentage::_10),
+	WidgetPlacer::resizeAndPositonWidgetInWnd(
+		static_cast<int>(Percentage::_10),
 		static_cast<int>(Percentage::_5),
 		buttonsCords.addX(butsDims).addX(margin),
 		hRButton,
