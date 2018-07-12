@@ -8,3 +8,9 @@ Things that could be added:
 Bugs to be fixed:
 - arrow keys should be registered globally
 - better algorithm for determining how much text goes into one page
+
+Open the file...
+![](https://github.com/kowalskikamil90/pdf-viewer/blob/master/demo/demo1.png)
+
+Use buttons or arrow keys to change slides.
+![](https://github.com/kowalskikamil90/pdf-viewer/blob/master/demo/demo2.png)
