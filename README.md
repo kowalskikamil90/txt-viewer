@@ -9,7 +9,7 @@ Bugs to be fixed:
 - arrow keys should be registered globally
 - better algorithm for determining how much text goes into one page
 
-Open the file...
+Open the file. The application will read the file and divide the content into pages, so it could be viewed as a presentation.
 ![](https://github.com/kowalskikamil90/pdf-viewer/blob/master/demo/demo1.png)
 
 Use buttons or arrow keys to change slides.
