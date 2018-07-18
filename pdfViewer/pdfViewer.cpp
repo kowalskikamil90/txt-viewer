@@ -34,7 +34,7 @@ TextInfo *txtInfoHndl = nullptr;                   // Handle to text info struct
 bool fileChosen = false;                           // Holds info if the file was chosen
 
 // Global handles
-HWND hWnd, hEdit, hStaticText, hLButton, hRButton, hTextArea;
+HWND hWnd, hCurrPage, hStaticText, hLButton, hRButton, hTextArea;
 // Default window procedure for buttons
 WNDPROC defaultBtnsWndProc;
 
@@ -51,6 +51,7 @@ static void                adjustSizeOfWidgets();
 static void                switchToPreviousPage();
 static void                switchToNextPage();
 static void                openFileProcedure();
+static void                setCurrentPage(int pageNum);
 
 /*
  * This is the application entry point
@@ -341,7 +342,7 @@ static void openFileProcedure()
 
 		// Set the current page as the first page
 		currentPage = 1;
-		SetWindowTextW(hEdit, L"1");
+		SetWindowTextW(hCurrPage, L"1 ");
 	}
 }
 
@@ -373,10 +374,7 @@ static void switchToNextPage()
 		if (currentPage < txtInfoHndl->numOfPages)
 		{
 			currentPage++;
-			wchar_t pageStr[10];
-			swprintf_s(pageStr, L"%d", currentPage);
-			SetWindowTextW(hEdit, pageStr);
-			SetWindowTextW(hTextArea, txtInfoHndl->pages.at(currentPage - 1).c_str());
+			setCurrentPage(currentPage);
 		}
 	}
 }
@@ -391,12 +389,20 @@ static void switchToPreviousPage()
 		if (currentPage > 1)
 		{
 			currentPage--;
-			wchar_t pageStr[10];
-			swprintf_s(pageStr, L"%d", currentPage);
-			SetWindowTextW(hEdit, pageStr);
-			SetWindowTextW(hTextArea, txtInfoHndl->pages.at(currentPage - 1).c_str());
+			setCurrentPage(currentPage);
 		}
 	}
+}
+
+/*
+ * Sets current page to gven number
+ */
+static void setCurrentPage(int pageNum)
+{
+	wchar_t pageStr[10];
+	swprintf_s(pageStr, L"%d ", pageNum);
+	SetWindowTextW(hCurrPage, pageStr);
+	SetWindowTextW(hTextArea, txtInfoHndl->pages.at(pageNum - 1).c_str());
 }
 
 /*
@@ -471,11 +477,11 @@ static void AddControls(HWND hWnd)
 	icex.dwICC = ICC_UPDOWN_CLASS;
 	InitCommonControlsEx(&icex);
 
-	hEdit = CreateWindowExW(WS_EX_CLIENTEDGE, WC_EDITW, NULL, WS_CHILD
+	hCurrPage = CreateWindowW(L"Static", L"0 ", WS_CHILD
 		| WS_VISIBLE | ES_RIGHT, 15, 15, 70, 25, hWnd,
 		(HMENU)ID_EDIT_PAGE, NULL, NULL);
 
-	hStaticText = CreateWindowW(L"Static", L"/ 1", // Start with page count equal to 1
+	hStaticText = CreateWindowW(L"Static", L"/ 0", // Start with page count equal to 1
 		WS_CHILD | WS_VISIBLE | SS_LEFT,
 		120, 20, 25, 25,
 		hWnd, NULL, NULL, NULL);
@@ -522,7 +528,7 @@ static void adjustSizeOfWidgets()
 		static_cast<int>(Percentage::_11),
 		static_cast<int>(Percentage::_5),
 		editAndUpDownWidgetsCoords,
-		hEdit,
+		hCurrPage,
 		hWnd);
 	size2D staticTextDims = WidgetPlacer::resizeAndPositonWidgetInWnd(
 		static_cast<int>(Percentage::_11),
@@ -551,7 +557,7 @@ static void adjustSizeOfWidgets()
 		TEXT("Times New Roman"));
 
 	// Send messages to actually set the font
-	SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont1, true);
+	SendMessage(hCurrPage, WM_SETFONT, (WPARAM)hFont1, true);
 	SendMessage(hStaticText, WM_SETFONT, (WPARAM)hFont1, true);
 
 	/* WIDGETS: buttons for page navigation */
