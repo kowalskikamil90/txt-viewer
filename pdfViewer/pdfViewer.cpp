@@ -35,6 +35,8 @@ bool fileChosen = false;                           // Holds info if the file was
 
 // Global handles
 HWND hWnd, hEdit, hStaticText, hLButton, hRButton, hTextArea;
+// Default window procedure for buttons
+WNDPROC defaultBtnsWndProc;
 
 // Local functions declarations
 static void                destroyTheWindowAndCleanUp(HWND hWnd);
@@ -246,6 +248,39 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 }
 
 /*
+ * Processes messages for buttons controls - subclassing
+ */
+static LRESULT CALLBACK extendedBtnsWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+		case WM_KEYDOWN:
+		{
+			switch (wParam)
+			{
+				case VK_ESCAPE:
+				{
+					handleMessageBox(hWnd);
+					break;
+				}
+				case VK_LEFT:
+				{
+					switchToPreviousPage();
+					break;
+				}
+				case VK_RIGHT:
+				{
+					switchToNextPage();
+					break;
+				}
+			}
+			break;
+		}
+	}
+	return CallWindowProc(defaultBtnsWndProc, hWnd, message, wParam, lParam);
+}
+
+/*
  * The entire procedure of opening the file and loading text into the window
  */
 static void openFileProcedure()
@@ -428,6 +463,15 @@ static void AddControls(HWND hWnd)
 	hRButton = CreateWindowW(L"Button", L">",
 		WS_VISIBLE | WS_CHILD,
 		120, 150, 80, 25, hWnd, (HMENU)ID_INC_PAGE, NULL, NULL);
+
+	/* Set the window procedure for buttons to ensure that arrow keys work
+	 * even when buttons are focused. By default this is not the case,
+	 * because the default window procedure for buttons does not handle
+	 * these signals as we want.*/
+
+	defaultBtnsWndProc = (WNDPROC)
+		SetWindowLong(hLButton, GWL_WNDPROC, (LONG)extendedBtnsWndProc);
+	    SetWindowLong(hRButton, GWL_WNDPROC, (LONG)extendedBtnsWndProc);
 
 	// Add the actual text field
 	hTextArea = CreateWindowW(L"Static", L"\n\nOpen a TXT file by selecting 'open' from 'file' menu.",
