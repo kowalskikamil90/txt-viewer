@@ -146,9 +146,11 @@ static BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
  */
 static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	HDC hDC;
+	PAINTSTRUCT ps;
+
     switch (message)
     {
-
 	case WM_CREATE:
 		{
 			/* Main window is maximized at the very beginning.
@@ -236,11 +238,29 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 		}
 		break;
 	}
-    case WM_DESTROY:
-	{
-		destroyTheWindowAndCleanUp(hWnd);
+	case WM_PAINT:
+		{
+		hDC = BeginPaint(hWnd, &ps);
+
+		HBRUSH hRedBrush = CreateHatchBrush(HS_DIAGCROSS, RGB(255, 0, 0));
+		HBRUSH hOldBrush = (HBRUSH)SelectObject(hDC, hRedBrush);
+
+		RECT r;
+		GetClientRect(hWnd, &r);
+		Rectangle(hDC, r.left, r.top, r.right - r.left, r.bottom - r.top);
+
+		SelectObject(hDC, hOldBrush);
+		DeleteObject(hRedBrush);
+		SelectObject(hDC, GetStockObject(BLACK_PEN));
+
+		EndPaint(hWnd, &ps);
 		break;
-	}
+		}
+    case WM_DESTROY:
+		{
+			destroyTheWindowAndCleanUp(hWnd);
+			break;
+		}
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -330,12 +350,16 @@ static void openFileProcedure()
  */
 static void handleMessageBox(HWND hWnd)
 {
-	int ret = MessageBoxW(hWnd, L"Are you sure you want to quit?",
+	/* This function is also used in window procedure for buttons
+	 * therefore, hWnd may also be the nandle for the buttons, however
+	 * we always want to send the WM_CLOSE message to the main window.
+	 * That is why the global scope operator is used.	*/
+	int ret = MessageBoxW(::hWnd, L"Are you sure you want to quit?",
 		L"Message", MB_OKCANCEL);
 
 	if (ret == IDOK) {
 
-		SendMessage(hWnd, WM_CLOSE, 0, 0);
+		SendMessage(::hWnd, WM_CLOSE, 0, 0);
 	}
 }
 
@@ -487,7 +511,7 @@ static void adjustSizeOfWidgets()
 {
 	size2D mainWin = WidgetPlacer::getWindowSize(hWnd);
 	size2D margin = WidgetPlacer::getPercentagePixelsOfWindow(Percentage::_1, hWnd);
-	int panelXCoord = mainWin.x / 3;
+	int panelXCoord = mainWin.x / 2.8;
 	int panelYCoord = margin.y;
 
 	/* WIDGETS: 'edit ' widget, 'upDown' widget, 'static txt' */
